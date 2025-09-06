@@ -20,6 +20,10 @@ import {
   Shield,
   RotateCcw,
   Package,
+  Battery,
+  HardDrive,
+  Clock,
+  CheckCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
@@ -644,35 +648,90 @@ const ProductDetails = () => {
              </div>
 
             {/* Product Features */}
-            <div className="grid grid-cols-2 gap-4 pt-6">
-              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                <Truck className="h-5 w-5 text-primary" />
-                <div>
-                  <p className="text-sm font-medium">شحن مجاني</p>
-                  <p className="text-xs text-gray-500">للطلبات فوق 500 ج.م</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6">
+              <motion.div 
+                className="group relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-xl p-4 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
+                whileHover={{ y: -2 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+              >
+                <div className="flex items-center gap-4">
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-sm group-hover:bg-blue-500/30 transition-all duration-300"></div>
+                    <div className="relative bg-blue-500 p-3 rounded-full">
+                      <Shield className="h-6 w-6 text-white" />
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-gray-800 group-hover:text-blue-700 transition-colors">ضمان 6 شهور</p>
+                    <p className="text-xs text-gray-600 mt-1">ضد عيوب الصناعة</p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                <Shield className="h-5 w-5 text-primary" />
-                <div>
-                  <p className="text-sm font-medium">ضمان الجودة</p>
-                  <p className="text-xs text-gray-500">استرجاع مجاني</p>
+              </motion.div>
+
+              <motion.div 
+                className="group relative overflow-hidden bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100 rounded-xl p-4 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
+                whileHover={{ y: -2 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <div className="flex items-center gap-4">
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-green-500/20 rounded-full blur-sm group-hover:bg-green-500/30 transition-all duration-300"></div>
+                    <div className="relative bg-green-500 p-3 rounded-full">
+                      <Battery className="h-6 w-6 text-white" />
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-gray-800 group-hover:text-green-700 transition-colors">ضمان الشاحن</p>
+                    <p className="text-xs text-gray-600 mt-1">والبطارية شهر</p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                <RotateCcw className="h-5 w-5 text-primary" />
-                <div>
-                  <p className="text-sm font-medium">استبدال سريع</p>
-                  <p className="text-xs text-gray-500">خلال 7 أيام</p>
+              </motion.div>
+
+              <motion.div 
+                className="group relative overflow-hidden bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-100 rounded-xl p-4 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
+                whileHover={{ y: -2 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                <div className="flex items-center gap-4">
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-purple-500/20 rounded-full blur-sm group-hover:bg-purple-500/30 transition-all duration-300"></div>
+                    <div className="relative bg-purple-500 p-3 rounded-full">
+                      <HardDrive className="h-6 w-6 text-white" />
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-gray-800 group-hover:text-purple-700 transition-colors">ضمان الهارد</p>
+                    <p className="text-xs text-gray-600 mt-1">شهر واحد</p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                <Star className="h-5 w-5 text-primary" />
-                <div>
-                  <p className="text-sm font-medium">جودة عالية</p>
-                  <p className="text-xs text-gray-500">منتجات أصلية</p>
+              </motion.div>
+
+              <motion.div 
+                className="group relative overflow-hidden bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 rounded-xl p-4 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
+                whileHover={{ y: -2 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+              >
+                <div className="flex items-center gap-4">
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-amber-500/20 rounded-full blur-sm group-hover:bg-amber-500/30 transition-all duration-300"></div>
+                    <div className="relative bg-amber-500 p-3 rounded-full">
+                      <CheckCircle className="h-6 w-6 text-white" />
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-gray-800 group-hover:text-amber-700 transition-colors">جودة عالية</p>
+                    <p className="text-xs text-gray-600 mt-1">منتجات أصلية</p>
+                  </div>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </motion.div>
         </div>
