@@ -82,10 +82,13 @@ const ProductDetails = () => {
     return mapping;
   }, [availableColors, product?.images]);
   
-  // Get current image based on selected color
-  const currentImage = selectedColor && colorImageMapping[selectedColor] 
-    ? colorImageMapping[selectedColor] 
-    : product?.images[selectedImage] || product?.images[0];
+  // Get current image based on selected color or selected image index
+  const currentImage = useMemo(() => {
+    if (availableColors.length > 1 && selectedColor && colorImageMapping[selectedColor]) {
+      return colorImageMapping[selectedColor];
+    }
+    return product?.images[selectedImage] || product?.images[0];
+  }, [selectedColor, colorImageMapping, selectedImage, product?.images, availableColors.length]);
 
   // Check if product is in cart (considering selected size and color)
   const cartItem = cart.find((item) => 
@@ -324,7 +327,7 @@ const ProductDetails = () => {
           {/* Product Images */}
           <div className="space-y-6">
             {/* Main Image */}
-            <div className="aspect-[4/5] w-full rounded-2xl overflow-hidden relative group bg-white shadow-lg">
+            <div className="aspect-[4/5] w-full rounded-2xl overflow-hidden relative group bg-white ">
               <AnimatePresence mode="wait">
                 <motion.img
                   key={currentImage}
@@ -352,21 +355,37 @@ const ProductDetails = () => {
               {product.images.length > 1 && (
                 <>
                   <button
-                    onClick={() =>
-                      setSelectedImage((prev) =>
-                        prev > 0 ? prev - 1 : product.images.length - 1
-                      )
-                    }
+                    onClick={() => {
+                      if (availableColors.length > 1) {
+                        // For products with multiple colors, navigate through colors
+                        const currentColorIndex = availableColors.findIndex(color => color === selectedColor);
+                        const prevColorIndex = currentColorIndex > 0 ? currentColorIndex - 1 : availableColors.length - 1;
+                        setSelectedColor(availableColors[prevColorIndex]);
+                      } else {
+                        // For products with single color, navigate through images
+                        setSelectedImage((prev) =>
+                          prev > 0 ? prev - 1 : product.images.length - 1
+                        );
+                      }
+                    }}
                     className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 backdrop-blur-sm p-3 text-gray-700 opacity-0 transition-all duration-200 group-hover:opacity-100 hover:bg-white shadow-lg"
                   >
                     <ChevronLeft className="h-6 w-6" />
                   </button>
                   <button
-                    onClick={() =>
-                      setSelectedImage((prev) =>
-                        prev < product.images.length - 1 ? prev + 1 : 0
-                      )
-                    }
+                    onClick={() => {
+                      if (availableColors.length > 1) {
+                        // For products with multiple colors, navigate through colors
+                        const currentColorIndex = availableColors.findIndex(color => color === selectedColor);
+                        const nextColorIndex = currentColorIndex < availableColors.length - 1 ? currentColorIndex + 1 : 0;
+                        setSelectedColor(availableColors[nextColorIndex]);
+                      } else {
+                        // For products with single color, navigate through images
+                        setSelectedImage((prev) =>
+                          prev < product.images.length - 1 ? prev + 1 : 0
+                        );
+                      }
+                    }}
                     className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 backdrop-blur-sm p-3 text-gray-700 opacity-0 transition-all duration-200 group-hover:opacity-100 hover:bg-white shadow-lg"
                   >
                     <ChevronRight className="h-6 w-6" />
@@ -375,34 +394,84 @@ const ProductDetails = () => {
               )}
             </div>
             
-            {/* Thumbnails - Show only images for available colors */}
-            {availableColors.length > 1 && (
-              <div className="flex gap-3 overflow-x-auto pb-2">
-                {availableColors.map((color, index) => {
-                  const image = colorImageMapping[color];
-                  if (!image) return null;
-                  
-                  return (
-                    <button
-                      key={color}
-                      onClick={() => setSelectedColor(color)}
-                      className={`relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl border-2 transition-all duration-200 ${
-                        selectedColor === color
-                          ? "border-primary "
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
-                    >
-                      <img
-                        src={image}
-                        alt={`${product.name} - ${getColorByName(color).name}`}
-                        className="h-full w-full object-contain"
-                      />
-                      {/* Color indicator overlay */}
-                      <div className="absolute bottom-1 right-1 w-4 h-4 rounded-full border-2 border-white shadow-sm"
-                           style={{ backgroundColor: color }} />
-                    </button>
-                  );
-                })}
+            {/* Thumbnails - Show all images */}
+            {product.images && product.images.length > 1 && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-medium text-gray-700">معرض الصور</h4>
+                  <span className="text-xs text-gray-500">
+                    {product.images.length} صورة
+                  </span>
+                </div>
+                
+                <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+                  {product.images.map((image, index) => {
+                    const isSelected = availableColors.length > 1 
+                      ? (selectedColor && colorImageMapping[selectedColor] === image) || 
+                        (!selectedColor && index === selectedImage)
+                      : index === selectedImage;
+                    
+                    return (
+                      <motion.button
+                        key={index}
+                        onClick={() => {
+                          if (availableColors.length > 1) {
+                            // Find the color that corresponds to this image
+                            const correspondingColor = availableColors.find(color => 
+                              colorImageMapping[color] === image
+                            );
+                            if (correspondingColor) {
+                              setSelectedColor(correspondingColor);
+                            }
+                          } else {
+                            setSelectedImage(index);
+                          }
+                        }}
+                        className={`group relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all duration-200 ${
+                          isSelected
+                            ? "border-primary ring-1 ring-primary/30 shadow-md"
+                            : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
+                        }`}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <img
+                          src={image}
+                          alt={`${product.name} - صورة ${index + 1}`}
+                          className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
+                        />
+                        
+                        {/* Selection indicator */}
+                        {isSelected && (
+                          <motion.div 
+                            className="absolute inset-0 bg-primary/20 flex items-center justify-center"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.15 }}
+                          >
+                            <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center shadow-sm">
+                              <CheckCircle className="h-3 w-3 text-white" />
+                            </div>
+                          </motion.div>
+                        )}
+                        
+                        {/* Color indicator overlay - only show if multiple colors */}
+                        {availableColors.length > 1 && (
+                          <div className="absolute bottom-1 right-1 w-3 h-3 rounded-full border border-white shadow-sm"
+                               style={{ backgroundColor: availableColors[index] || '#ccc' }} />
+                        )}
+                        
+                        {/* Image number badge - smaller and more subtle */}
+                        <div className="absolute top-1 left-1 w-4 h-4 bg-black/60 text-white text-xs rounded-full flex items-center justify-center font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          {index + 1}
+                        </div>
+                        
+                        {/* Hover overlay */}
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-all duration-200" />
+                      </motion.button>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>

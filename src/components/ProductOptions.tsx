@@ -249,11 +249,23 @@ export function ProductOptions({ product, onSelectionChange }: ProductOptionsPro
                 </div>
               )}
               {selectedAddonIds.length > 0 && (
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">الإضافات المختارة:</span>
-                  <span className="font-medium text-gray-900">
-                    {selectedAddonIds.length} إضافة
-                  </span>
+                <div className="space-y-2">
+                  <div className="text-sm text-gray-600">الإضافات المختارة:</div>
+                  <div className="space-y-1">
+                    {selectedAddonIds.map((addonId) => {
+                      const addon = product.addons?.find(a => a.id === addonId);
+                      if (!addon) return null;
+                      
+                      return (
+                        <div key={addonId} className="flex items-center justify-between text-sm bg-green-50 px-3 py-2 rounded-lg border border-green-200">
+                          <span className="font-medium text-gray-900">{addon.label}</span>
+                          <span className="text-green-600 font-semibold">
+                            +{formatCurrency(addon.price_delta, 'جنيه')}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
             </div>
