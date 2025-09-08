@@ -19,8 +19,8 @@ export const STORE_CONFIG = {
     phone: "01008397114",
     formattedPhone: "201008397114",
     whatsapp: "201008397114",
-    email: "ibrahim.moamen100@gmail.com",
-    address: " مؤسسه الزكاه امام مستشفي اليوم الواحد ",
+    email: "elaraby_ahamed@yahoo.com",
+    address: "  مكرم عبيد، مول زون، الدور الرابع، محل العربي كمبيوتر",
     city: "القاهرة",
     country: "مصر",
   },
@@ -44,14 +44,12 @@ export const STORE_CONFIG = {
   
   // معلومات صاحب المتجر
   owner: {
-    name: "محمود ذكي ",
-    image: "/zaky.png",
+    name: "العربي  ",
     phone: "01008397114",
     whatsapp: "01008397114",
-    email: "ibrahim.moamen100@gmail.com",
+    email: "elaraby_ahamed@yahoo.com",
     title: "صاحب المتجر",
-    bio: "  مهندس معماري و تاجر في مجال الأجهزة الإلكترونية",
-    experience: "خبرة أكثر من 10 سنوات في مجال التكنولوجيا",
+
   },
   
   // معلومات الموظفين
@@ -75,16 +73,35 @@ export const STORE_CONFIG = {
   // مواقع الفروع
   locations: [
     {
-      id: "main",
-        name: "  محمود ذكي",
-        address: "شارع مؤسسه الزكاه خلف مستشفي اليوم الواحد ",
+      id: "branch1",
+      name: "فرع مكرم عبيد - مول زون",
+      address: "مكرم عبيد، مول زون، الدور الرابع، محل العربي كمبيوتر",
       phone: "01008397114",
-      hours: "9:00 صباحاً - 10:00 مساءً",
+      hours: "1:00 ظهراً - 11:00 مساءً",
       coordinates: { lat: 30.0444, lng: 31.2357 },
-      googleMapsUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d673.3348366421665!2d31.238969331941714!3d30.045635496740715!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x145840c775c807a7%3A0x4e6b07f8bc12ffe6!2z2YXYsdmD2LIg2KfZhNio2LPYqtin2YYg2YTZhNij2KzZh9iy2Kkg2KfZhNil2YTZg9iq2LHZiNmG2YrYqQ!5e1!3m2!1sar!2seg!4v1748959826497!5m2!1sar!2seg",
+      googleMapsUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3454.18919669154!2d31.3483051!3d30.0508615!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14583fb69e051025%3A0x342d1b763093297a!2z2KfZhNi52KjZh9in2YrZhtmK2Kkg2YTZhNij2KzZh9iy2Kkg2KfZhNmF2KfZhNi52YbYqSDZhNmE2KfYqNmK2YjZhNmK2Kk!5e0!3m2!1sar!2seg!4v1694196350000!5m2!1sar!2seg",
       isMain: true,
     },
-
+    {
+      id: "branch2",
+      name: "فرع مول البستان",
+      address: "مول البستان، الدور الثاني، محل العربي كمبيوتر",
+      phone: "01050008586",
+      hours: "1:00 ظهراً - 11:00 مساءً",
+      coordinates: { lat: 30.0444, lng: 31.2357 },
+      googleMapsUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3453.123456789!2d31.2357!3d30.0444!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x145840c775c807a7%3A0x4e6b07f8bc12ffe6!2z2YXYsdmD2LIg2KfZhNio2LPYqtin2YYg2YTZhNij2KzZh9iy2Kkg2KfZhNil2YTZg9iq2LHZiNmG2YrYqQ!5e1!3m2!1sar!2seg!4v1748959826497!5m2!1sar!2seg",
+      isMain: false,
+    },
+    {
+      id: "branch3",
+      name: "فرع مكرم عبيد - مول تكنولوجي",
+      address: "مكرم عبيد، مول تكنولوجي، الدور الرابع، محل العربي كمبيوتر",
+      phone: "01115007595",
+      hours: "1:00 ظهراً - 11:00 مساءً",
+      coordinates: { lat: 30.0444, lng: 31.2357 },
+      googleMapsUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3454.18919669154!2d31.3483051!3d30.0508615!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14583fb69e051025%3A0x342d1b763093297a!2z2KfZhNi52KjZh9in2YrZhtmK2Kkg2YTZhNij2KzZh9iy2Kkg2KfZhNmF2KfZhNi52YbYqSDZhNmE2KfYqNmK2YjZhNmK2Kk!5e0!3m2!1sar!2seg!4v1694196350000!5m2!1sar!2seg",
+      isMain: false,
+    },
   ],
   
   // ألوان المشروع
