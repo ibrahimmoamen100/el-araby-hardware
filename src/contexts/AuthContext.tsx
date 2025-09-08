@@ -245,13 +245,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const updateUserProfile = async (updates: Partial<UserProfile>) => {
     if (!user) return { success: false, error: 'No user logged in' };
 
-    try {
-      const updatedProfile = {
-        ...userProfile,
-        ...updates,
-        updatedAt: new Date(),
-      };
+    const updatedProfile = {
+      ...userProfile,
+      ...updates,
+      updatedAt: new Date(),
+    };
 
+    try {
       await setDoc(doc(db, 'users', user.uid), updatedProfile, { merge: true });
       setUserProfile(updatedProfile);
       

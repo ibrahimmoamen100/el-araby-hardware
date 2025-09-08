@@ -156,64 +156,7 @@ export default function About() {
           </div>
         </div>
 
-        {/* Store Owner Section */}
-        <div className="container py-20">
-          <div className="max-w-5xl mx-auto">
-            <div className="flex flex-col md:flex-row items-center gap-16 border-gray-200 border p-4 rounded-lg">
-              {/* Profile Image Container */}
-              <div className="relative">
-                <div className="w-48 h-48 rounded-2xl overflow-hidden border-4 border-primary/10 shadow-lg transform hover:scale-105 transition-transform duration-300">
-                  <img
-                    src={STORE_OWNER.image}
-                    alt={STORE_OWNER.name}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.currentTarget.src = "/placeholder.svg";
-                    }}
-                  />
-                </div>
-                <div className="absolute -bottom-4 -right-4 w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center">
-                  <FaStore className="w-7 h-7 text-primary" />
-                </div>
-              </div>
 
-              {/* Content Container */}
-              <div className="text-center md:text-right flex-1 space-y-8">
-                <div className="space-y-4">
-                  <h3 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                    {STORE_OWNER.name}
-                  </h3>
-                  <p className="text-primary font-medium text-xl">
-                    {STORE_OWNER.title}
-                  </p>
-                </div>
-
-                <p className="text-muted-foreground text-lg leading-relaxed max-w-2xl mx-auto md:mx-0">
-                  {STORE_OWNER.bio}
-                </p>
-
-                {/* Contact Information */}
-                <div className="flex flex-col sm:flex-row items-center justify-center md:justify-end gap-6 pt-6">
-                  <div className="flex items-center gap-3 bg-gradient-to-r from-gray-50 to-gray-100 px-8 py-4 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
-                    <FaPhone className="w-6 h-6 text-primary" />
-                    <span className="font-medium text-xl">
-                      {STORE_OWNER.phone}
-                    </span>
-                  </div>
-                  <button
-                    onClick={handleWhatsAppClick}
-                    className="inline-flex items-center gap-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-8 py-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105"
-                  >
-                    <FaWhatsapp className="text-2xl" />
-                    <span className="font-medium text-xl">
-                      {t("about.contactWhatsApp")}
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </main>
 
       <Footer />
