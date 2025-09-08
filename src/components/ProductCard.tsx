@@ -179,7 +179,7 @@ export const ProductCard = ({
 
   return (
     <motion.div 
-      className={`group relative overflow-hidden rounded-xl border bg-card transition-all duration-300 hover:border-primary/30 ${isOutOfStock ? 'opacity-60' : ''} h-[420px] flex flex-col`}
+      className={`group relative overflow-hidden rounded-xl border bg-card transition-all duration-300 hover:border-primary/30 hover:shadow-lg ${isOutOfStock ? 'opacity-60' : ''} h-[450px] flex flex-col`}
       onMouseEnter={() => {
         // Show second image on hover if available
         if (product.images && product.images.length > 1) {
@@ -190,14 +190,14 @@ export const ProductCard = ({
         // Return to first image when not hovering
         setCurrentImageIndex(0);
       }}
-      whileHover={{ y: -5 }}
-      transition={{ duration: 0.2 }}
+      whileHover={{ y: -8, scale: 1.02 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
     >
-      <div className="aspect-[1/1] sm:aspect-[4/5] lg:aspect-[3/4] overflow-hidden relative">
+      <div className="aspect-[1/1] sm:aspect-[4/5] lg:aspect-[3/4] overflow-hidden relative bg-gray-50">
         <img
           src={currentImage}
           alt={product.name || 'Product'}
-          className="h-full w-full object-contain transition-all duration-500 "
+          className="h-full w-full object-contain transition-all duration-500 group-hover:scale-105"
           loading="lazy"
         />
         
@@ -238,85 +238,96 @@ export const ProductCard = ({
         </div>
       </div>
       
-             <div className="p-2 sm:p-3 flex flex-col h-full justify-between min-h-0">
-         <div className="space-y-1.5 flex-1">
-          <h3 className="font-semibold text-sm sm:text-base line-clamp-2  transition-colors duration-300 leading-tight">
+      <div className="p-3 sm:p-4 flex flex-col flex-1 justify-between">
+        <div className="space-y-2 flex-1">
+          <h3 className="font-semibold text-sm sm:text-base line-clamp-2 transition-colors duration-300 leading-tight text-gray-900">
             {product.name || 'Unnamed Product'}
           </h3>
-          <p className="text-xs sm:text-sm text-muted-foreground line-clamp-1">
+          <p className="text-xs sm:text-sm text-gray-600 line-clamp-1">
             {product.brand || 'Unknown Brand'}
           </p>
-                     <div className="flex gap-1.5 items-baseline">
+          
+          {/* Price Section */}
+          <div className="flex gap-2 items-baseline">
             {discountedPrice !== null ? (
               <>
-                <p className="font-bold text-sm sm:text-base text-red-600">
+                <p className="font-bold text-base sm:text-lg text-red-600">
                   {formatCurrency(discountedPrice, 'جنيه')}
                 </p>
-                <p className="text-xs sm:text-sm text-muted-foreground line-through">
+                <p className="text-sm text-gray-500 line-through">
                   {formatCurrency(product.price, 'جنيه')}
                 </p>
+                <div className="ml-auto">
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                    -{product.discountPercentage}%
+                  </span>
+                </div>
               </>
             ) : (
-              <p className="font-bold text-sm sm:text-base transition-colors duration-300">
+              <p className="font-bold text-base sm:text-lg text-gray-900 transition-colors duration-300">
                 {formatCurrency(product.price, 'جنيه')}
               </p>
             )}
           </div>
           
-                     {/* Stock Information */}
-           <div className="flex items-center gap-1.5">
-            <Package className="h-3 w-3 text-muted-foreground" />
+          {/* Stock Information */}
+          <div className="flex items-center gap-1.5">
+            <Package className="h-3 w-3 text-gray-500" />
             {isOutOfStock ? (
               <span className="text-xs text-red-600 font-medium">غير متوفر</span>
             ) : (
-              <span className="text-xs text-muted-foreground">
+              <span className="text-xs text-gray-600">
                 متوفر: {availableQuantity} قطعة
               </span>
             )}
           </div>
           
-                     {product.specialOffer && timeRemaining && (
-             <div className="flex items-center text-xs font-medium text-red-600 mt-0.5">
-              <Timer className="h-3 w-3 mr-1" /> {timeRemaining}
+          {/* Special Offer Timer */}
+          {product.specialOffer && timeRemaining && (
+            <div className="flex items-center text-xs font-medium text-red-600 bg-red-50 px-2 py-1 rounded-md">
+              <Timer className="h-3 w-3 mr-1" /> 
+              <span>ينتهي في: {timeRemaining}</span>
             </div>
           )}
 
-                     {/* Options indicator */}
-           {hasOptions && (
-             <div className="text-xs text-primary font-medium flex items-center mt-0.5">
-              <div className="w-2 h-2 bg-primary rounded-full mr-1 animate-pulse"></div>
+          {/* Options indicator */}
+          {hasOptions && (
+            <div className="text-xs text-blue-600 font-medium flex items-center bg-blue-50 px-2 py-1 rounded-md">
+              <div className="w-2 h-2 bg-blue-500 rounded-full mr-1 animate-pulse"></div>
               <span className="hidden sm:inline">{getOptionsDescription()}</span>
               <span className="sm:hidden">خيارات متعددة</span>
             </div>
           )}
         </div>
 
-                 {/* Action Buttons - Fixed at bottom */}
-         <div className="mt-2 flex flex-col sm:flex-row gap-2 min-h-[40px] w-full flex-shrink-0">
+        {/* Action Buttons - Fixed at bottom */}
+        <div className="mt-3 flex flex-col sm:flex-row gap-2 w-full">
           <Button
             size="sm"
             variant="outline"
-            className="flex-1 text-sm transition-all duration-200 min-h-[32px] group/btn active:scale-95 border-2"
+            className="flex-1 text-sm transition-all duration-200 h-9 group/btn hover:bg-gray-50 border-gray-300 hover:border-gray-400"
             onClick={handleViewDetails}
           >
-                         <Eye className="h-3.5 w-3.5 mr-1  transition-transform duration-200" />
-                         <span className="font-medium">تفاصيل</span>
+            <Eye className="h-4 w-4 mr-1 transition-transform duration-200 group-hover/btn:scale-110" />
+            <span className="font-medium">تفاصيل</span>
           </Button>
           
           <Button
             size="sm"
-            className={`flex-1 text-sm transition-all duration-200 min-h-[32px] group/btn active:scale-95 border-2 ${
+            className={`flex-1 text-sm transition-all duration-200 h-9 group/btn ${
               isOutOfStock 
-                ? 'bg-gray-400 hover:bg-gray-500 cursor-not-allowed border-gray-400 text-white' 
-                : 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-md border-primary'
+                ? 'bg-gray-400 hover:bg-gray-500 cursor-not-allowed text-white' 
+                : product.specialOffer
+                  ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-md hover:shadow-lg'
+                  : 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-md hover:shadow-lg'
             }`}
             onClick={handleAddToCart}
             disabled={isOutOfStock || isInCart}
           >
-                         <ShoppingCart className="h-3.5 w-3.5 mr-1  transition-transform duration-200" />
-                         <span className="font-medium">
-               {isOutOfStock ? 'غير متوفر' : (hasOptions ? 'اختيار' : 'إضافة')}
-             </span>
+            <ShoppingCart className="h-4 w-4 mr-1 transition-transform duration-200 group-hover/btn:scale-110" />
+            <span className="font-medium">
+              {isOutOfStock ? 'غير متوفر' : (hasOptions ? 'اختيار' : 'إضافة')}
+            </span>
           </Button>
         </div>
       </div>

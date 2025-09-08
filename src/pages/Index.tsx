@@ -132,53 +132,58 @@ const Index = () => {
         {specialOffersProducts.length > 0 && (
           <section className="my-20 md:my-28">
             <div className="relative">
+              {/* Background decoration */}
+              <div className="absolute inset-0 bg-gradient-to-br from-red-50 via-orange-50 to-red-50 rounded-3xl"></div>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-red-100 rounded-full -translate-y-16 translate-x-16 opacity-50"></div>
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-orange-100 rounded-full translate-y-12 -translate-x-12 opacity-50"></div>
+              
               {/* Main content */}
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-red-50 via-transparent to-red-50 rounded-2xl"></div>
-                <div className="relative p-2">
-                  {/* Title section */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-8 bg-red-500 rounded-full"></div>
-                      <div>
-                        <h2 className="text-2xl md:text-3xl font-bold text-gray-600">
-                          {t("specialOffers.title")}
-                        </h2>
-                        <p className="text-sm text-gray-500/70 mt-1">
-                          {t("specialOffers.subtitle")}
-                        </p>
+              <div className="relative p-6 md:p-8">
+                {/* Title section */}
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-4">
+                    <div className="relative">
+                      <div className="w-3 h-12 bg-gradient-to-b from-red-500 to-red-600 rounded-full"></div>
+                      <div className="absolute inset-0 w-3 h-12 bg-gradient-to-b from-red-400 to-red-500 rounded-full animate-pulse"></div>
+                    </div>
+                    <div>
+                      <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
+                        {t("specialOffers.title")}
+                      </h2>
+                      <p className="text-base text-gray-600 mt-2 font-medium">
+                        {t("specialOffers.subtitle")}
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    onClick={() => navigate("/products")}
+                    className="flex items-center gap-2 border-2 border-red-200 hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-all duration-300 hover:scale-105"
+                  >
+                    {t("specialOffers.viewAll")}
+                    <ArrowRight className="h-4 w-4 ms-1 rtl:rotate-180" />
+                  </Button>
+                </div>
+
+                {/* Decorative divider */}
+                <div className="mb-8">
+                  <div className="w-20 h-1 bg-gradient-to-r from-red-500 to-orange-500 rounded-full"></div>
+                </div>
+
+                {/* Products carousel */}
+                <div className="relative">
+                  {loading && products.length === 0 ? (
+                    <div className="flex items-center justify-center py-16">
+                      <div className="flex items-center gap-4">
+                        <div className="h-8 w-8 animate-spin rounded-full border-3 border-red-500 border-t-transparent"></div>
+                        <span className="text-lg text-gray-600 font-medium">جاري تحميل العروض الخاصة...</span>
                       </div>
                     </div>
-                    <Button
-                      variant="outline"
-                      onClick={() => navigate("/products")}
-                      className="flex items-center gap-1 border-red-200 hover:bg-red-50 hover:text-red-600"
-                    >
-                      {t("specialOffers.viewAll")}
-                      <ArrowRight className="h-4 w-4 ms-1 rtl:rotate-180" />
-                    </Button>
-                  </div>
-
-                  {/* Divider */}
-                  <div className="mb-6">
-                    <div className="w-1/6 border-2 border-gray-300"></div>
-                  </div>
-
-                  {/* Products carousel */}
-                  <div className="relative">
-                    {loading && products.length === 0 ? (
-                      <div className="flex items-center justify-center py-12">
-                        <div className="flex items-center gap-3">
-                          <div className="h-6 w-6 animate-spin rounded-full border-2 border-red-500 border-t-transparent"></div>
-                          <span className="text-gray-600">جاري تحميل العروض الخاصة...</span>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="relative">
-                        <ProductCarousel products={specialOffersProducts} />
-                      </div>
-                    )}
-                  </div>
+                  ) : (
+                    <div className="relative">
+                      <ProductCarousel products={specialOffersProducts} />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
