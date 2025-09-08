@@ -16,9 +16,9 @@ export const STORE_CONFIG = {
   
   // معلومات الاتصال
   contact: {
-    phone: "01024911062",
-    formattedPhone: "201024911062",
-    whatsapp: "201024911062",
+    phone: "01008397114",
+    formattedPhone: "201008397114",
+    whatsapp: "201008397114",
     email: "ibrahim.moamen100@gmail.com",
     address: " مؤسسه الزكاه امام مستشفي اليوم الواحد ",
     city: "القاهرة",
@@ -46,8 +46,8 @@ export const STORE_CONFIG = {
   owner: {
     name: "محمود ذكي ",
     image: "/zaky.png",
-    phone: "01024911062",
-    whatsapp: "201024911062",
+    phone: "01008397114",
+    whatsapp: "01008397114",
     email: "ibrahim.moamen100@gmail.com",
     title: "صاحب المتجر",
     bio: "  مهندس معماري و تاجر في مجال الأجهزة الإلكترونية",
@@ -59,14 +59,14 @@ export const STORE_CONFIG = {
     salesManager: {
       name: "Ibrahim",
       image: "/ibrahim.png",
-      phone: "01024911062",
+      phone: "01008397114",
       title: "مدير المبيعات",
       bio: "مسؤول عن إدارة المبيعات وتطوير استراتيجيات التسويق",
     },
     deliveryManager: {
       name: "Ahmed",
       image: "/def.png",
-      phone: "01024911062",
+      phone: "01008397114",
       title: "مسؤول التوصيل",
       bio: "مسؤول عن توصيل الطلبات وضمان وصولها في الوقت المحدد",
     },
@@ -78,7 +78,7 @@ export const STORE_CONFIG = {
       id: "main",
         name: "  محمود ذكي",
         address: "شارع مؤسسه الزكاه خلف مستشفي اليوم الواحد ",
-      phone: "01024911062",
+      phone: "01008397114",
       hours: "9:00 صباحاً - 10:00 مساءً",
       coordinates: { lat: 30.0444, lng: 31.2357 },
       googleMapsUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d673.3348366421665!2d31.238969331941714!3d30.045635496740715!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x145840c775c807a7%3A0x4e6b07f8bc12ffe6!2z2YXYsdmD2LIg2KfZhNio2LPYqtin2YYg2YTZhNij2KzZh9iy2Kkg2KfZhNil2YTZg9iq2LHZiNmG2YrYqQ!5e1!3m2!1sar!2seg!4v1748959826497!5m2!1sar!2seg",
