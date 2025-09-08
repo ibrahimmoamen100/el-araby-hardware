@@ -276,8 +276,11 @@ export const ProductCard = ({
             {isOutOfStock ? (
               <span className="text-xs text-red-600 font-medium">غير متوفر</span>
             ) : (
+              // <span className="text-xs text-gray-600">
+              //   متوفر: {availableQuantity} قطعة
+              // </span>
               <span className="text-xs text-gray-600">
-                متوفر: {availableQuantity} قطعة
+                 In stock
               </span>
             )}
           </div>
