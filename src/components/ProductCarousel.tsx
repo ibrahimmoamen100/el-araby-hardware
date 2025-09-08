@@ -67,11 +67,11 @@ export function ProductCarousel({
       </div>
 
       <Carousel className="w-full" setApi={setApi}>
-        <CarouselContent className="-ml-2 md:-ml-4">
+        <CarouselContent className="-ml-1 sm:-ml-2 md:-ml-4">
           {products.filter(product => product && product.id).map((product) => (
             <CarouselItem
               key={product.id}
-              className="pl-2 md:pl-4 basis-1/2 sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
+              className="pl-1 sm:pl-2 md:pl-4 basis-2/3 sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
             >
               <ProductCard
                 product={product}

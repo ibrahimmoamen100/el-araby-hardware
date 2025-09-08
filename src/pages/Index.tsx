@@ -136,7 +136,7 @@ const Index = () => {
               <div className="absolute inset-0 bg-gradient-to-br from-red-50 via-orange-50 to-red-50 rounded-3xl"></div>
               
               {/* Main content */}
-              <div className="relative p-6 md:p-8">
+              <div className="relative p-3 sm:p-4 md:p-6 lg:p-8">
                 {/* Title section */}
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center gap-4">

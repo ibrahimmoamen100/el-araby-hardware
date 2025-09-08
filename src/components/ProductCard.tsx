@@ -303,18 +303,18 @@ export const ProductCard = ({
         {/* Action Buttons - Fixed at bottom */}
         <div className="mt-3 flex flex-col sm:flex-row gap-2 w-full">
           <Button
-            size="sm"
+            size="default"
             variant="outline"
-            className="flex-1 text-sm transition-all duration-200 h-9 group/btn hover:bg-gray-50 border-gray-300 hover:border-gray-400"
+            className="flex-1 text-sm sm:text-sm transition-all duration-200 h-10 sm:h-9 group/btn hover:bg-gray-50 border-gray-300 hover:border-gray-400"
             onClick={handleViewDetails}
           >
-            <Eye className="h-4 w-4 mr-1 transition-transform duration-200 group-hover/btn:scale-110" />
+            <Eye className="h-4 w-4 mr-1.5 transition-transform duration-200 group-hover/btn:scale-110" />
             <span className="font-medium">تفاصيل</span>
           </Button>
           
           <Button
-            size="sm"
-            className={`flex-1 text-sm transition-all duration-200 h-9 group/btn ${
+            size="default"
+            className={`flex-1 text-sm sm:text-sm transition-all duration-200 h-10 sm:h-9 group/btn ${
               isOutOfStock 
                 ? 'bg-gray-400 hover:bg-gray-500 cursor-not-allowed text-white' 
                 : product.specialOffer
@@ -324,7 +324,7 @@ export const ProductCard = ({
             onClick={handleAddToCart}
             disabled={isOutOfStock || isInCart}
           >
-            <ShoppingCart className="h-4 w-4 mr-1 transition-transform duration-200 group-hover/btn:scale-110" />
+            <ShoppingCart className="h-4 w-4 mr-1.5 transition-transform duration-200 group-hover/btn:scale-110" />
             <span className="font-medium">
               {isOutOfStock ? 'غير متوفر' : (hasOptions ? 'اختيار' : 'إضافة')}
             </span>
