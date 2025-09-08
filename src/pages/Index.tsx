@@ -134,8 +134,6 @@ const Index = () => {
             <div className="relative">
               {/* Background decoration */}
               <div className="absolute inset-0 bg-gradient-to-br from-red-50 via-orange-50 to-red-50 rounded-3xl"></div>
-              <div className="absolute top-0 right-0 w-32 h-32 bg-red-100 rounded-full -translate-y-16 translate-x-16 opacity-50"></div>
-              <div className="absolute bottom-0 left-0 w-24 h-24 bg-orange-100 rounded-full translate-y-12 -translate-x-12 opacity-50"></div>
               
               {/* Main content */}
               <div className="relative p-6 md:p-8">

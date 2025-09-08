@@ -32,7 +32,8 @@ export function ProductOptions({ product, onSelectionChange }: ProductOptionsPro
   const [selectedSizeId, setSelectedSizeId] = useState<string | null>(null);
   const [selectedAddonIds, setSelectedAddonIds] = useState<string[]>([]);
 
-  // Calculate final price based on selections
+  // Calculate final price based on selections (without applying special offer discount)
+  // The special offer discount is already applied in ProductDetails component
   const calculateFinalPrice = useCallback((sizeId: string | null, addonIds: string[]) => {
     let basePrice = product.price; // Base price
 
@@ -52,23 +53,10 @@ export function ProductOptions({ product, onSelectionChange }: ProductOptionsPro
       });
     }
 
-    // Use discount price as recorded in admin if available, otherwise calculate
-    let finalPrice = basePrice;
-    if (product.specialOffer && 
-        product.offerEndsAt &&
-        new Date(product.offerEndsAt) > new Date()) {
-      if (product.discountPrice) {
-        // Use the discount price as recorded in admin
-        finalPrice = product.discountPrice;
-      } else if (product.discountPercentage) {
-        // Calculate discount if discountPrice is not available
-        const discountAmount = (basePrice * product.discountPercentage) / 100;
-        finalPrice = basePrice - discountAmount;
-      }
-    }
-
-    return finalPrice;
-  }, [product.price, product.sizes, product.addons, product.specialOffer, product.offerEndsAt, product.discountPrice, product.discountPercentage]);
+    // Return the calculated price without applying special offer discount
+    // The discount will be applied in ProductDetails component
+    return basePrice;
+  }, [product.price, product.sizes, product.addons]);
 
   // Update parent component when selections change
   useEffect(() => {
@@ -83,7 +71,7 @@ export function ProductOptions({ product, onSelectionChange }: ProductOptionsPro
     const finalPrice = calculateFinalPrice(selectedSizeId, selectedAddonIds);
     
     onSelectionChange(selectedSize, selectedAddons, finalPrice);
-  }, [selectedSizeId, selectedAddonIds, product.sizes, product.addons, product.specialOffer, product.offerEndsAt, product.discountPrice, product.discountPercentage, onSelectionChange]);
+  }, [selectedSizeId, selectedAddonIds, product.sizes, product.addons, calculateFinalPrice, onSelectionChange]);
 
   // Initialize with first size if available
   useEffect(() => {
@@ -224,14 +212,11 @@ export function ProductOptions({ product, onSelectionChange }: ProductOptionsPro
           </div>
           <div className="text-right">
             <div className="text-2xl font-bold text-primary">
-                              {formatCurrency(calculateFinalPrice(selectedSizeId, selectedAddonIds), 'جنيه')}
+              {formatCurrency(calculateFinalPrice(selectedSizeId, selectedAddonIds), 'جنيه')}
             </div>
-            {product.specialOffer && 
-             new Date(product.offerEndsAt as string) > new Date() && (
-              <Badge variant="destructive" className="mt-1">
-                {product.discountPercentage}% خصم
-              </Badge>
-            )}
+            <div className="text-sm text-gray-500 mt-1">
+              قبل الخصم
+            </div>
           </div>
         </div>
         

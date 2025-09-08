@@ -117,14 +117,16 @@ const ProductDetails = () => {
         basePrice = product.sizes[0].price;
       }
       
-      // Use discount price as recorded in admin if available, otherwise calculate
+      // Apply special offer discount to the calculated base price
       let finalPrice = basePrice;
       if (product.specialOffer && 
           product.offerEndsAt &&
           new Date(product.offerEndsAt) > new Date()) {
         if (product.discountPrice) {
+          // Use discountPrice directly if available (same logic as ProductCard)
           finalPrice = product.discountPrice;
         } else if (product.discountPercentage) {
+          // Calculate discount percentage on the current base price
           const discountAmount = (basePrice * product.discountPercentage) / 100;
           finalPrice = basePrice - discountAmount;
         }
@@ -143,12 +145,28 @@ const ProductDetails = () => {
   const handleSelectionChange = useCallback((
     newSelectedSize: ProductSize | null,
     newSelectedAddons: ProductAddon[],
-    newFinalPrice: number
+    calculatedPrice: number
   ) => {
     setSelectedSize(newSelectedSize);
     setSelectedAddons(newSelectedAddons);
-    setFinalPrice(newFinalPrice);
-  }, []);
+    
+    // Apply special offer discount to the calculated price (including sizes and addons)
+    let finalPrice = calculatedPrice;
+    if (product?.specialOffer && 
+        product.offerEndsAt &&
+        new Date(product.offerEndsAt) > new Date()) {
+      if (product.discountPrice) {
+        // Use discountPrice directly if available (same logic as ProductCard)
+        finalPrice = product.discountPrice;
+      } else if (product.discountPercentage) {
+        // Calculate discount percentage on the calculated price (including sizes and addons)
+        const discountAmount = (calculatedPrice * product.discountPercentage) / 100;
+        finalPrice = calculatedPrice - discountAmount;
+      }
+    }
+    
+    setFinalPrice(finalPrice);
+  }, [product]);
 
   if (!product) {
     return null;

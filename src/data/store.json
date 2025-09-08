@@ -1,6 +1,36 @@
 {
   "products": [
     {
+      "id": "test-product-9500",
+      "name": "Test Product 9500",
+      "brand": "Test Brand",
+      "price": 9500,
+      "category": "test",
+      "subcategory": "test",
+      "color": "",
+      "size": "",
+      "images": [
+        "https://eg.jumia.is/unsafe/fit-in/500x500/filters:fill(white)/product/21/7706311/1.jpg?8886"
+      ],
+      "description": "Test product with 9500 price and 5.26% discount",
+      "specialOffer": true,
+      "discountPercentage": 5.26,
+      "discountPrice": 9000,
+      "offerEndsAt": "2025-12-31T23:59:59.000Z",
+      "isArchived": false,
+      "createdAt": "2025-09-08T12:00:00.000Z",
+      "wholesaleInfo": {
+        "supplierName": "Test Supplier",
+        "supplierPhone": "01000000000",
+        "supplierEmail": "test@test.com",
+        "supplierLocation": "Test Location",
+        "purchasePrice": 8000,
+        "minimumOrderQuantity": 1,
+        "notes": "Test product",
+        "purchasedQuantity": 10
+      }
+    },
+    {
       "id": "338c3a6e-02d4-499a-b89b-9ee023860949",
       "name": "AMD Ryzen 9 7950X",
       "brand": "AMD",
@@ -59,7 +89,7 @@
       "id": "67076607-cb60-48d0-a7cc-293e0856dcb4",
       "name": "HP Laptop I3-1315U",
       "brand": "HP",
-      "price": 9000,
+      "price": 9500,
       "category": "laptop",
       "subcategory": "Core i3",
       "color": "",
@@ -440,7 +470,7 @@
       "id": "67076607-cb60-48d0-a7cc-293e0856dcb4",
       "name": "HP Laptop I3-1315U",
       "brand": "HP",
-      "price": 9000,
+      "price": 9500,
       "category": "laptop",
       "subcategory": "Core i3",
       "color": "",
