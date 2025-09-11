@@ -53,6 +53,7 @@ const ProductDetails = () => {
   const [selectedColor, setSelectedColor] = useState<string>("");
   const [finalPrice, setFinalPrice] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
   const products = useStore((state) => state.products);
   const loading = useStore((state) => state.loading);
@@ -71,6 +72,21 @@ const ProductDetails = () => {
 
   // Parse available colors and create color-image mapping
   const availableColors = product?.color ? product.color.split(',').map(c => c.trim()) : [];
+
+  // Handle loading state for product details
+  useEffect(() => {
+    if (products.length > 0) {
+      // Products are loaded, check if current product exists
+      if (product) {
+        setIsLoading(false);
+      } else {
+        // Product not found, redirect after a short delay
+        setTimeout(() => {
+          navigate("/products");
+        }, 100);
+      }
+    }
+  }, [products, product, navigate]);
   
   // Create mapping between colors and images
   const colorImageMapping = useMemo(() => {
@@ -109,10 +125,7 @@ const ProductDetails = () => {
     .slice(0, 4);
 
   useEffect(() => {
-    // Only redirect if we're not loading and the product is not found
-    if (!loading && !product) {
-      navigate("/products");
-    } else if (product) {
+    if (product) {
       // Initialize final price with base price or first size price
       let basePrice = product.price;
       if (product.sizes && product.sizes.length > 0) {
@@ -141,7 +154,7 @@ const ProductDetails = () => {
         setSelectedColor(availableColors[0]);
       }
     }
-  }, [product, loading, navigate, availableColors]);
+  }, [product, availableColors, selectedColor]);
 
   // Handle selection changes from ProductOptions component
   const handleSelectionChange = useCallback((
@@ -171,7 +184,7 @@ const ProductDetails = () => {
   }, [product]);
 
   // Show loading state while data is being loaded
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
