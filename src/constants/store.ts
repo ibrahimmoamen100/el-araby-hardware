@@ -86,7 +86,7 @@ export const STORE_CONFIG = {
       id: "branch2",
       name: "فرع مول البستان",
       address: "مول البستان، الدور الثاني، محل العربي كمبيوتر",
-      phone: "01050008586",
+      phone: "0105008586",
       hours: "1:00 ظهراً - 11:00 مساءً",
       coordinates: { lat: 30.0444, lng: 31.2357 },
       googleMapsUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3453.123456789!2d31.2357!3d30.0444!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x145840c775c807a7%3A0x4e6b07f8bc12ffe6!2z2YXYsdmD2LIg2KfZhNio2LPYqtin2YYg2YTZhNij2KzZh9iy2Kkg2KfZhNil2YTZg9iq2LHZiNmG2YrYqQ!5e1!3m2!1sar!2seg!4v1748959826497!5m2!1sar!2seg",
