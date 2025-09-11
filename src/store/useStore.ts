@@ -179,14 +179,16 @@ export const useStore = create<StoreState>()(
           };
         });
 
-        // Update Firebase using atomic transaction to prevent race conditions
-        await updateProductQuantitiesAtomically([{
+        // Update Firebase using atomic transaction to prevent race conditions (async, don't await)
+        updateProductQuantitiesAtomically([{
           productId: product.id,
           quantityToDeduct: quantity
-        }]);
+        }]).catch(error => {
+          console.error('Error updating product quantities in Firebase:', error);
+          // Optionally show a toast or handle the error
+        });
         
-        // Reload products to get the latest quantities from Firebase
-        await get().loadProducts();
+        // No need to reload products since we already updated the local state
       },
       removeFromCart: async (productId) => {
         const cartItem = get().cart.find((item) => item.product && item.product.id === productId);
@@ -198,19 +200,34 @@ export const useStore = create<StoreState>()(
         const availableQuantity = product.wholesaleInfo?.quantity || 0;
         const cartQuantity = cartItem.quantity;
 
-        // Restore quantity using atomic transaction
-        await restoreProductQuantitiesAtomically([{
+        // Restore quantity using atomic transaction (async, don't await)
+        restoreProductQuantitiesAtomically([{
           productId: productId,
           quantityToRestore: cartQuantity
-        }]);
+        }]).catch(error => {
+          console.error('Error restoring product quantities in Firebase:', error);
+        });
 
-        set((state) => ({
-          cart: state.cart.filter((item) => item.product && item.product.id !== productId),
-          // We'll update the local products state after Firebase confirms the update
-        }));
+        set((state) => {
+          // Update local state with restored quantity
+          const updatedProducts = state.products.map((p) =>
+            p.id === productId
+              ? {
+                  ...p,
+                  wholesaleInfo: p.wholesaleInfo
+                    ? { ...p.wholesaleInfo, quantity: (p.wholesaleInfo.quantity || 0) + cartQuantity }
+                    : p.wholesaleInfo
+                }
+              : p
+          );
+
+          return {
+            cart: state.cart.filter((item) => item.product && item.product.id !== productId),
+            products: updatedProducts
+          };
+        });
         
-        // Reload products to get the latest quantities from Firebase
-        await get().loadProducts();
+        // No need to reload products since we already updated the local state
       },
       updateCartItemQuantity: async (productId, quantity) => {
         const cartItem = get().cart.find((item) => item.product && item.product.id === productId);
@@ -343,19 +360,17 @@ export const useStore = create<StoreState>()(
         return cartItem.unitFinalPrice;
       },
       addProduct: async (product) => {
-        set({ loading: true, error: null });
         try {
           const newProduct = await productsService.addProduct(product);
           const products = get().products;
-          set({ products: [newProduct, ...products], loading: false });
+          set({ products: [newProduct, ...products], error: null });
         } catch (error) {
           console.error('Error adding product:', error);
-          set({ error: 'فشل في إضافة المنتج', loading: false });
+          set({ error: 'فشل في إضافة المنتج' });
           throw error;
         }
       },
       updateProduct: async (updatedProduct) => {
-        set({ loading: true, error: null });
         try {
           await productsService.updateProduct(updatedProduct.id, updatedProduct);
           const products = get().products;
@@ -363,16 +378,15 @@ export const useStore = create<StoreState>()(
             products: products.map((p) =>
               p.id === updatedProduct.id ? updatedProduct : p
             ),
-            loading: false,
+            error: null,
           });
         } catch (error) {
           console.error('Error updating product:', error);
-          set({ error: 'فشل في تحديث المنتج', loading: false });
+          set({ error: 'فشل في تحديث المنتج' });
           throw error;
         }
       },
       deleteProduct: async (productId) => {
-        set({ loading: true, error: null });
         try {
           await productsService.deleteProduct(productId);
           const products = get().products;
@@ -387,11 +401,11 @@ export const useStore = create<StoreState>()(
           set({
             products: updatedProducts,
             cart: updatedCart,
-            loading: false,
+            error: null,
           });
         } catch (error) {
           console.error('Error deleting product:', error);
-          set({ error: 'فشل في حذف المنتج', loading: false });
+          set({ error: 'فشل في حذف المنتج' });
           throw error;
         }
       },
@@ -411,10 +425,9 @@ export const useStore = create<StoreState>()(
         set({ products: updatedProducts });
       },
       loadProducts: async () => {
-        set({ loading: true, error: null });
         try {
           const products = await productsService.getAllProducts();
-          set({ products, loading: false });
+          set({ products, error: null });
           
           // Clean cart from deleted products after loading
           setTimeout(() => {
@@ -422,7 +435,7 @@ export const useStore = create<StoreState>()(
           }, 100);
         } catch (error) {
           console.error('Error loading products:', error);
-          set({ error: 'فشل في تحميل المنتجات', loading: false });
+          set({ error: 'فشل في تحميل المنتجات' });
         }
       },
       searchProducts: async (searchTerm: string) => {
@@ -457,7 +470,6 @@ export const useStore = create<StoreState>()(
         }
       },
       updateProductQuantity: async (productId: string, newQuantity: number) => {
-        set({ loading: true, error: null });
         try {
           const product = get().products.find(p => p.id === productId);
           if (!product) throw new Error('المنتج غير موجود');
@@ -482,12 +494,11 @@ export const useStore = create<StoreState>()(
           );
           set({
             products: updatedProducts,
-            loading: false,
           });
           console.log('Store: Local state updated successfully');
         } catch (error) {
           console.error('Error updating product quantity:', error);
-          set({ error: 'فشل في تحديث كمية المنتج', loading: false });
+          set({ error: 'فشل في تحديث كمية المنتج' });
           throw error;
         }
       },

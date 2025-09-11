@@ -136,12 +136,12 @@ const ProductDetails = () => {
       
       setFinalPrice(finalPrice);
       
-      // Set first color as default if available
+      // Set first color as default if available and no color is selected
       if (availableColors.length > 0 && !selectedColor) {
         setSelectedColor(availableColors[0]);
       }
     }
-  }, [product, loading, navigate, availableColors, selectedColor]);
+  }, [product, loading, navigate, availableColors]);
 
   // Handle selection changes from ProductOptions component
   const handleSelectionChange = useCallback((
