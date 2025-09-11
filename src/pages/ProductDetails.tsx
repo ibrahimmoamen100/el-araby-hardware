@@ -55,6 +55,7 @@ const ProductDetails = () => {
   const [isWishlisted, setIsWishlisted] = useState(false);
   
   const products = useStore((state) => state.products);
+  const loading = useStore((state) => state.loading);
   const cart = useStore((state) => state.cart);
   const addToCart = useStore((state) => state.addToCart);
   const removeFromCart = useStore((state) => state.removeFromCart);
@@ -108,9 +109,10 @@ const ProductDetails = () => {
     .slice(0, 4);
 
   useEffect(() => {
-    if (!product) {
+    // Only redirect if we're not loading and the product is not found
+    if (!loading && !product) {
       navigate("/products");
-    } else {
+    } else if (product) {
       // Initialize final price with base price or first size price
       let basePrice = product.price;
       if (product.sizes && product.sizes.length > 0) {
@@ -139,7 +141,7 @@ const ProductDetails = () => {
         setSelectedColor(availableColors[0]);
       }
     }
-  }, [product, navigate, availableColors, selectedColor]);
+  }, [product, loading, navigate, availableColors, selectedColor]);
 
   // Handle selection changes from ProductOptions component
   const handleSelectionChange = useCallback((
@@ -168,8 +170,31 @@ const ProductDetails = () => {
     setFinalPrice(finalPrice);
   }, [product]);
 
+  // Show loading state while data is being loaded
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto mb-4"></div>
+          <p className="text-gray-600">جاري تحميل المنتج...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show 404 if product not found after loading is complete
   if (!product) {
-    return null;
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">404</h1>
+          <p className="text-gray-600 mb-8">المنتج غير موجود</p>
+          <Button onClick={() => navigate("/products")}>
+            العودة إلى المنتجات
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   const handleAddToCart = async () => {
