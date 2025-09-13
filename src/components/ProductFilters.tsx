@@ -497,8 +497,9 @@ export function ProductFilters() {
       <Button
         variant="outline"
         className="w-full"
-        onClick={() =>
+        onClick={() => {
           setFilters({
+            search: undefined,
             sortBy: undefined,
             category: undefined,
             subcategory: undefined,
@@ -507,8 +508,11 @@ export function ProductFilters() {
             size: undefined,
             minPrice: undefined,
             maxPrice: undefined,
-          })
-        }
+            supplier: undefined,
+          });
+          // Navigate back to products page to clear URL parameters
+          navigate('/products');
+        }}
       >
         {t("filters.clearAll")}
       </Button>

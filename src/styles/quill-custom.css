@@ -1,5 +1,10 @@
 /* Custom styles for ReactQuill editor */
 
+/* Apply Cairo font to Quill editor */
+.ql-editor {
+  font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif !important;
+}
+
 /* Improve spacing for ordered and unordered lists */
 .ql-editor ol,
 .ql-editor ul {

@@ -118,8 +118,17 @@ export const STORE_CONFIG = {
   // معلومات Carousel الصفحة الرئيسية
   heroCarousel: [
     {
+      id: "slide3",
+      image: "/4.png", 
+      title: "  ",
+      description: " ",
+      buttonText: "تسوق الآن",
+      buttonLink: "/products",
+      overlay: "from-black/70 to-transparent",
+    },
+    {
       id: "slide1",
-      image: "/bg1.png",
+      image: "/3.png",
       title: "أفضل الأجهزة الإلكترونية",
       description: "اكتشف تشكيلة واسعة من الأجهزة الإلكترونية بأفضل الأسعار",
       buttonText: "تسوق الآن",
@@ -128,7 +137,7 @@ export const STORE_CONFIG = {
     },
     {
       id: "slide2", 
-      image: "/bg2.png",
+      image: "/2.png",
       title: "عروض خاصة محدودة",
       description: "احصل على خصومات تصل إلى 50% على منتجات مختارة",
       buttonText: "تسوق الآن",
@@ -136,10 +145,10 @@ export const STORE_CONFIG = {
       overlay: "from-black/70 to-transparent",
     },
     {
-      id: "slide3",
-      image: "/bg1.png", 
-      title: "توصيل سريع ومجاني",
-      description: "نوصل طلبك خلال 24 ساعة مع ضمان الجودة",
+      id: "slide4",
+      image: "/1.png", 
+      title: "  ",
+      description: " ",
       buttonText: "تسوق الآن",
       buttonLink: "/products",
       overlay: "from-black/70 to-transparent",

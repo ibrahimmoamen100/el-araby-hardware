@@ -102,6 +102,18 @@ export function AdminFilters({
             نطاق السعر
           </Label>
           <div className="flex gap-2">
+          <Input
+              type="number"
+              placeholder="الحد الأقصى"
+              value={filters.maxPrice || ""}
+              onChange={(e) =>
+                onFilterChange({
+                  ...filters,
+                  maxPrice: e.target.value ? Number(e.target.value) : undefined,
+                })
+              }
+              className="text-left"
+            />
             <Input
               type="number"
               placeholder="الحد الأدنى"
@@ -114,28 +126,18 @@ export function AdminFilters({
               }
               className="text-left"
             />
-            <Input
-              type="number"
-              placeholder="الحد الأقصى"
-              value={filters.maxPrice || ""}
-              onChange={(e) =>
-                onFilterChange({
-                  ...filters,
-                  maxPrice: e.target.value ? Number(e.target.value) : undefined,
-                })
-              }
-              className="text-left"
-            />
+
           </div>
           <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <span>
+              {filters.maxPrice ? formatPrice(filters.maxPrice) : "0"}{" "}
+              {t("common.currency")}
+            </span>
             <span>
               {filters.minPrice ? formatPrice(filters.minPrice) : "0"}{" "}
               {t("common.currency")}
             </span>
-            <span>
-              {filters.maxPrice ? formatPrice(filters.maxPrice) : "0"}{" "}
-              {t("common.currency")}
-            </span>
+
           </div>
         </div>
 
