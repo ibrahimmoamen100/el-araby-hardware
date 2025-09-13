@@ -34,6 +34,9 @@ export function ProductFilters() {
     size: false,
   });
 
+  // State to control accordion sections
+  const [accordionValue, setAccordionValue] = useState<string[]>(["price", "category"]);
+
   // Get filtered products based on current filters
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
@@ -210,6 +213,16 @@ export function ProductFilters() {
       size: undefined, // Reset size when category changes
     });
 
+    // Auto-open subcategory section when a category is selected
+    if (newCategory) {
+      setAccordionValue(prev => {
+        if (!prev.includes("subcategory")) {
+          return [...prev, "subcategory"];
+        }
+        return prev;
+      });
+    }
+
     // Update URL
     if (newCategory) {
       const encodedCategory = encodeURIComponent(newCategory);
@@ -239,6 +252,16 @@ export function ProductFilters() {
       color: undefined, // Reset color when brand changes
       size: undefined, // Reset size when brand changes
     });
+
+    // Auto-open subcategory section when a brand is selected (if category is also selected)
+    if (value !== "all" && filters.category) {
+      setAccordionValue(prev => {
+        if (!prev.includes("subcategory")) {
+          return [...prev, "subcategory"];
+        }
+        return prev;
+      });
+    }
   };
 
   return (
@@ -246,7 +269,8 @@ export function ProductFilters() {
       <Accordion
         type="multiple"
         className="w-full"
-        defaultValue={["price", "category"]}
+        value={accordionValue}
+        onValueChange={setAccordionValue}
       >
         {/* Price Range Filter */}
         <AccordionItem value="price">

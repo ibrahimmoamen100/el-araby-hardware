@@ -246,6 +246,14 @@ export const ProductCard = ({
           <p className="text-xs sm:text-sm text-gray-600 line-clamp-1">
             {product.brand || 'Unknown Brand'}
           </p>
+          {(product.category || product.subcategory) && (
+            <p className="text-xs text-gray-500 line-clamp-1">
+              {product.category}
+              {product.subcategory && (
+                <span className="ml-1">/ {product.subcategory}</span>
+              )}
+            </p>
+          )}
           
           {/* Price Section */}
           <div className="flex gap-2 items-baseline">

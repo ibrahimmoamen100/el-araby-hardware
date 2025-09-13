@@ -287,6 +287,9 @@ export function EditProductModal({
     const finalCategory = showCustomCategory
       ? customCategory
       : formData.category;
+    const finalSubcategory = showCustomSubcategory
+      ? customSubcategory
+      : formData.subcategory;
 
     if (!formData.name || !finalBrand || !formData.price || !finalCategory) {
       toast.error("Please fill in all required fields");
@@ -310,6 +313,7 @@ export function EditProductModal({
         ...formData,
         brand: finalBrand,
         category: finalCategory,
+        subcategory: finalSubcategory,
         color: colors.length > 0 ? colors.join(",") : "",
         size: sizes.length > 0 ? sizes.join(",") : "",
         discountPercentage: formData.specialOffer && formData.discountPercentage
