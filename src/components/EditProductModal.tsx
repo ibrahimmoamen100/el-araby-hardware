@@ -909,36 +909,37 @@ export function EditProductModal({
                 prose-ul:marker:text-foreground
                 prose-ol:marker:text-foreground"
               >
-                <ReactQuill
-                  theme="snow"
-                  value={formData.description}
-                  onChange={(value) =>
-                    setFormData({ ...formData, description: value })
-                  }
-                  modules={{
-                    toolbar: [
-                      [{ header: [1, 2, 3, false] }],
-                      ["bold", "italic", "underline", "strike"],
-                      [{ list: "ordered" }, { list: "bullet" }],
-                      ["clean"],
-                    ],
-                  }}
-                  className="min-h-[200px] resize-y rtl-quill"
-                  style={{
-                    height: "auto",
-                    minHeight: "200px",
-                    maxHeight: "1000px",
-                  }}
-                  formats={[
-                    "header",
-                    "bold",
-                    "italic",
-                    "underline",
-                    "strike",
-                    "list",
-                    "bullet",
-                  ]}
-                />
+                <div className="quill-container">
+                  <ReactQuill
+                    theme="snow"
+                    value={formData.description}
+                    onChange={(value) =>
+                      setFormData({ ...formData, description: value })
+                    }
+                    modules={{
+                      toolbar: [
+                        [{ header: [1, 2, 3, false] }],
+                        ["bold", "italic", "underline", "strike"],
+                        [{ list: "ordered" }, { list: "bullet" }],
+                        ["clean"],
+                      ],
+                    }}
+                    className="rtl-quill"
+                    style={{
+                      height: "auto",
+                      minHeight: "200px",
+                    }}
+                    formats={[
+                      "header",
+                      "bold",
+                      "italic",
+                      "underline",
+                      "strike",
+                      "list",
+                      "bullet",
+                    ]}
+                  />
+                </div>
               </div>
             </div>
           </div>

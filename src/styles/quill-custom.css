@@ -77,6 +77,48 @@
   padding-left: 0;
 }
 
+/* Fix for description field height and overflow */
+.quill-container {
+  position: relative;
+  width: 100%;
+}
+
+.quill-container .ql-container {
+  min-height: 200px !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.quill-container .ql-editor {
+  min-height: 200px !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  resize: vertical;
+}
+
+/* Ensure the editor grows with content */
+.quill-container .ql-container.ql-snow {
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  overflow: visible;
+}
+
+.quill-container .ql-editor.ql-blank::before {
+  left: 1rem;
+  right: 1rem;
+  font-style: italic;
+  color: #999;
+}
+
+/* RTL support for placeholder */
+.rtl-quill .ql-editor.ql-blank::before {
+  right: 1rem;
+  left: auto;
+  text-align: right;
+}
+
 .rtl-quill .ql-editor li {
   text-align: right;
 }
@@ -164,4 +206,46 @@
 .rtl-quill .ql-editor ol {
   padding-right: 1.5em;
   padding-left: 0;
+}
+
+/* Fix for description field height and overflow */
+.quill-container {
+  position: relative;
+  width: 100%;
+}
+
+.quill-container .ql-container {
+  min-height: 200px !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.quill-container .ql-editor {
+  min-height: 200px !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  resize: vertical;
+}
+
+/* Ensure the editor grows with content */
+.quill-container .ql-container.ql-snow {
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  overflow: visible;
+}
+
+.quill-container .ql-editor.ql-blank::before {
+  left: 1rem;
+  right: 1rem;
+  font-style: italic;
+  color: #999;
+}
+
+/* RTL support for placeholder */
+.rtl-quill .ql-editor.ql-blank::before {
+  right: 1rem;
+  left: auto;
+  text-align: right;
 }
