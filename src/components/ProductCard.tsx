@@ -316,7 +316,7 @@ export const ProductCard = ({
           <Button
             size="default"
             variant="outline"
-            className="flex-1 text-sm sm:text-sm transition-all duration-200 h-10 sm:h-9 group/btn hover:bg-gray-50 border-gray-300 hover:border-gray-400"
+            className="flex-1 text-sm sm:text-sm transition-all hover:text-primary duration-200 h-10 sm:h-9 group/btn hover:bg-gray-50 border-gray-300 hover:border-primary"
             onClick={handleViewDetails}
           >
             <Eye className="h-4 w-4 mr-1.5 transition-transform duration-200 group-hover/btn:scale-110" />
