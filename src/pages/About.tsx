@@ -54,12 +54,12 @@ const companyInfo = [
     borderColor: "border-primary/20",
   },
   {
-    icon: FaTimesCircle,
-    title: "لا يوجد صيانة",
-    description: "نحن لا نقدم خدمات الصيانة، نركز على بيع منتجات عالية الجودة",
-    color: "text-orange-600",
-    bgColor: "bg-orange-50",
-    borderColor: "border-orange-200",
+    icon: FaShieldAlt,
+    title: "ضمان 6 شهور شامل",
+    description: "الجهاز عليه 6 شهور ضمان (5 شهور صيانة + شهر استبدال) 👌",
+    color: "text-green-600",
+    bgColor: "bg-green-50",
+    borderColor: "border-green-200",
   },
 ];
 

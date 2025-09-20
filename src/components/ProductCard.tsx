@@ -302,13 +302,13 @@ export const ProductCard = ({
           )}
 
           {/* Options indicator */}
-          {hasOptions && (
+          {/* {hasOptions && (
             <div className="text-xs text-blue-600 font-medium flex items-center bg-blue-50 px-2 py-1 rounded-md">
               <div className="w-2 h-2 bg-blue-500 rounded-full mr-1 animate-pulse"></div>
               <span className="hidden sm:inline">{getOptionsDescription()}</span>
               <span className="sm:hidden">خيارات متعددة</span>
             </div>
-          )}
+          )} */}
         </div>
 
         {/* Action Buttons - Fixed at bottom */}
