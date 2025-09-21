@@ -187,8 +187,8 @@ export default function Cashier() {
   // Calculate cart totals
   const cartTotals = useMemo(() => {
     const subtotal = cart.reduce((sum, item) => sum + item.totalPrice, 0);
-    const tax = subtotal * 0.14; // 14% tax
-    const total = subtotal + tax;
+    const tax = 0; // No tax applied
+    const total = subtotal; // Total equals subtotal without tax
     return { subtotal, tax, total };
   }, [cart]);
 
@@ -1334,15 +1334,6 @@ export default function Cashier() {
                 {/* Cart Totals */}
                 {cart.length > 0 && (
                   <div className="space-y-2 pt-4 border-t">
-                    <div className="flex justify-between text-sm">
-                      <span>المجموع الفرعي:</span>
-                      <span>{cartTotals.subtotal.toLocaleString()} ج.م</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span>الضريبة (14%):</span>
-                      <span>{cartTotals.tax.toLocaleString()} ج.م</span>
-                    </div>
-                    <Separator />
                     <div className="flex justify-between font-bold text-lg">
                       <span>الإجمالي:</span>
                       <span>{cartTotals.total.toLocaleString()} ج.م</span>

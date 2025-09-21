@@ -107,7 +107,7 @@ const Cart = () => {
       const existingGroup = groups.find(
         (group) => group.supplierName === supplierName
       );
-      const price = getCartItemPrice(item.product);
+      const price = getCartItemPrice(item);
 
       if (existingGroup) {
         existingGroup.items.push(item);
@@ -254,18 +254,18 @@ const Cart = () => {
       .map((group) => {
         const itemsText = group.items
           .map((item) => {
-            const price = getCartItemPrice(item.product);
-            return `• ${item.product.name} - ${item.quantity} × ${formatPrice(price)} = ${formatPrice(price * item.quantity)}`;
+            const price = item.product.price || 0;
+            return `• ${item.product.name} - ${item.quantity} × ${formatCurrency(price, 'جنيه')} = ${formatCurrency(price * item.quantity, 'جنيه')}`;
           })
           .join("\n");
 
-        return `🏪 *${group.supplierName}*\n${itemsText}\n💰 *المجموع: ${formatPrice(group.total)}*\n📞 ${group.supplierPhone}`;
+        return `🏪 *${group.supplierName}*\n${itemsText}\n💰 *المجموع: ${formatCurrency(group.total, 'جنيه')}*\n📞 ${group.supplierPhone}`;
       })
       .join("\n\n");
 
     const deliveryInfo = `📦 *معلومات التوصيل*\n👤 ${userProfile?.displayName}\n📱 ${userProfile?.phone}\n🏠 ${userProfile?.address}\n🏙️ ${userProfile?.city}`;
 
-    const fullMessage = `${message}\n\n${deliveryInfo}\n\n💰 *المجموع الكلي: ${formatPrice(totalAmount)}*`;
+    const fullMessage = `${message}\n\n${deliveryInfo}\n\n💰 *المجموع الكلي: ${formatCurrency(totalAmount, 'جنيه')}*`;
 
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(fullMessage)}`;
     window.open(whatsappUrl, "_blank");
