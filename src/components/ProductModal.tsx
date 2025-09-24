@@ -193,7 +193,7 @@ export function ProductModal({
       `📦 ${t("products.category")}: ${product.category}\n` +
       (product.size ? `📏 ${t("products.size")}: ${product.size}\n` : "") +
       `\n${product.description}\n\n` +
-      `🔗 ${window.location.origin}/products/${product.id}`;
+      `🔗 ${window.location.origin}/product/${product.id}`;
 
     // Encode the message for WhatsApp
     const encodedMessage = encodeURIComponent(message);

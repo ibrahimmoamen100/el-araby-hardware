@@ -77,6 +77,9 @@ const App = () => (
                     <Route path="/cart" element={<Cart />} />
                     <Route path="/products" element={<Products />} />
                     <Route path="/products/category/:category" element={<Products />} />
+                    {/* New SEO-friendly singular route */}
+                    <Route path="/product/:id" element={<ProductDetails />} />
+                    {/* Backward compatibility */}
                     <Route path="/products/:id" element={<ProductDetails />} />
                     <Route path="/locations" element={<Locations />} />
                     <Route path="/about" element={<About />} />

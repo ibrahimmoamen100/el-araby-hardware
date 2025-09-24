@@ -106,7 +106,7 @@ export const ProductCard = ({
       toast.info("يحتوي المنتج على خيارات متعددة", {
         description: `سيتم توجيهك إلى صفحة المنتج لاختيار ${getOptionsDescription()}`,
       });
-      navigate(`/products/${product.id}`);
+      navigate(`/product/${product.id}`);
       return;
     }
 
@@ -135,7 +135,7 @@ export const ProductCard = ({
   };
 
   const handleViewDetails = () => {
-    navigate(`/products/${product.id}`);
+    navigate(`/product/${product.id}`);
   };
 
   // Use the discount price as recorded in admin, or calculate if not available

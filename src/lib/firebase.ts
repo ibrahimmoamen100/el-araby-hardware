@@ -2,7 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
-import { getFirestore, collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, orderBy, where, Timestamp, runTransaction } from 'firebase/firestore';
+import { getFirestore, collection, doc, getDocs, getDoc, addDoc, setDoc, updateDoc, deleteDoc, query, orderBy, where, Timestamp, runTransaction } from 'firebase/firestore';
 import { Product } from '@/types/product';
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -54,6 +54,57 @@ if (typeof window !== 'undefined') {
 // Firebase Products Service
 export class FirebaseProductsService {
   private collectionName = 'products';
+
+  // Generate a URL-friendly slug from a product name
+  private slugifyProductName(name: string): string {
+    const maxWords = 25;
+    const normalized = name
+      .trim()
+      // Replace underscores with spaces first
+      .replace(/[_]+/g, ' ')
+      // Collapse multiple whitespace
+      .replace(/\s+/g, ' ');
+
+    // Limit to first N words
+    const words = normalized.split(' ').slice(0, maxWords);
+    const limited = words.join(' ');
+
+    // Convert to lowercase for consistency
+    const lower = limited.toLowerCase();
+
+    // Keep letters (including non-latin), numbers and spaces; replace others with a space
+    const cleaned = lower.replace(/[^\p{L}\p{N}\s-]+/gu, ' ');
+
+    // Replace spaces and consecutive dashes with single dash, and trim
+    const dashed = cleaned
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-');
+
+    // Optionally cap total length for nicer URLs
+    const maxLen = 120;
+    return dashed.length > maxLen ? dashed.slice(0, maxLen).replace(/-+$/g, '') : dashed;
+  }
+
+  // Ensure unique slug by checking Firestore doc IDs and appending a counter if needed
+  private async ensureUniqueSlug(baseSlug: string): Promise<string> {
+    let candidate = baseSlug || 'product';
+    let attempt = 1;
+
+    // Check if a document with this ID already exists
+    // Try a reasonable number of attempts to avoid infinite loops
+    while (attempt <= 100) {
+      const ref = doc(db, this.collectionName, candidate);
+      const snap = await getDoc(ref);
+      if (!snap.exists()) {
+        return candidate;
+      }
+      attempt += 1;
+      candidate = `${baseSlug}-${attempt}`;
+    }
+    // Fallback: timestamp-based suffix
+    return `${baseSlug}-${Date.now().toString(36)}`;
+  }
 
   // Get all products
   async getAllProducts(): Promise<Product[]> {
@@ -109,7 +160,7 @@ export class FirebaseProductsService {
   async addProduct(product: Omit<Product, 'id'>): Promise<Product> {
     try {
       const productsRef = collection(db, this.collectionName);
-      
+
       // Clean the product data by removing undefined values
       const cleanProduct = Object.fromEntries(
         Object.entries(product).filter(([_, value]) => value !== undefined)
@@ -122,12 +173,18 @@ export class FirebaseProductsService {
         offerEndsAt: (cleanProduct as any).offerEndsAt ? Timestamp.fromDate(new Date((cleanProduct as any).offerEndsAt)) : null,
         expirationDate: (cleanProduct as any).expirationDate ? Timestamp.fromDate(new Date((cleanProduct as any).expirationDate)) : null,
       };
-      
-      const docRef = await addDoc(productsRef, productData);
-      
+
+      // Build slug from product name and ensure uniqueness
+      const baseSlug = this.slugifyProductName((cleanProduct as any).name || 'product');
+      const uniqueSlug = await this.ensureUniqueSlug(baseSlug);
+
+      // Create document with custom ID equal to the slug
+      const docRef = doc(productsRef, uniqueSlug);
+      await setDoc(docRef, productData);
+
       return {
-        ...product,
-        id: docRef.id,
+        ...(cleanProduct as any),
+        id: uniqueSlug,
       } as Product;
     } catch (error) {
       console.error('Error adding product:', error);

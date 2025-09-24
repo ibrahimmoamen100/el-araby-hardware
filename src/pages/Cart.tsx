@@ -395,7 +395,7 @@ const Cart = () => {
                               src={displayImage}
                               alt={item.product.name}
                               className="h-20 w-20 rounded-md object-cover cursor-pointer hover:opacity-80 transition-opacity"
-                              onClick={() => navigate(`/products/${item.product.id}`)}
+                                onClick={() => navigate(`/product/${item.product.id}`)}
                             />
                             {item.selectedColor && (
                               <div 
@@ -409,7 +409,7 @@ const Cart = () => {
                       <div className="flex-1">
                         <h3 
                           className="font-medium cursor-pointer hover:text-primary hover:underline transition-colors"
-                          onClick={() => navigate(`/products/${item.product.id}`)}
+                          onClick={() => navigate(`/product/${item.product.id}`)}
                         >
                           {item.product.name}
                         </h3>

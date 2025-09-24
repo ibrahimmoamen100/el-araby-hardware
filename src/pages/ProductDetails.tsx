@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { useStore } from "@/store/useStore";
 import { Product, ProductSize, ProductAddon } from "@/types/product";
 import { ProductCard } from "@/components/ProductCard";
@@ -210,6 +211,17 @@ const ProductDetails = () => {
     );
   }
 
+  // SEO: Build dynamic meta info
+  const plainDescription = (product.description || "")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  const baseDescription = plainDescription || `${product.brand} - ${product.category}`;
+  const metaDescription = baseDescription.length > 160
+    ? `${baseDescription.slice(0, 157)}...`
+    : baseDescription;
+  const canonicalUrl = `${window.location.origin}/product/${product.id}`;
+
   const handleAddToCart = async () => {
     // Check if product is out of stock
     const availableQuantity = product.wholesaleInfo?.quantity || 0;
@@ -277,7 +289,7 @@ const ProductDetails = () => {
   };
 
   const handleShare = () => {
-    const productUrl = `${window.location.origin}/products/${product.id}`;
+  const productUrl = `${window.location.origin}/product/${product.id}`;
 
     // Build selection info
     const selectionInfo = [];
@@ -321,6 +333,19 @@ const ProductDetails = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Helmet>
+        <title>{`${product.name} | ${product.brand}`}</title>
+        <meta name="description" content={metaDescription} />
+        <link rel="canonical" href={canonicalUrl} />
+        <meta property="og:title" content={`${product.name} | ${product.brand}`} />
+        <meta property="og:description" content={metaDescription} />
+        {product.images?.[0] && (
+          <meta property="og:image" content={product.images[0]} />
+        )}
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:type" content="product" />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Helmet>
       <main className="container mx-auto py-8 px-4 md:px-8">
         {/* Breadcrumb */}
         <motion.div
