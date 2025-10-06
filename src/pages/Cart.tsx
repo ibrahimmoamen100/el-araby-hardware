@@ -1,5 +1,6 @@
 import { useStore } from "@/store/useStore";
 import { ProductModal } from "@/components/ProductModal";
+import LoginRequiredModal from "@/components/LoginRequiredModal";
 import { useState, useEffect } from "react";
 import { Product } from "@/types/product";
 import { Button } from "@/components/ui/button";
@@ -68,6 +69,7 @@ const Cart = () => {
   const [productToDelete, setProductToDelete] = useState<string | null>(null);
   const [showClearCartAlert, setShowClearCartAlert] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showLoginRequiredModal, setShowLoginRequiredModal] = useState(false);
   const navigate = useNavigate();
 
   const {
@@ -128,6 +130,83 @@ const Cart = () => {
 
   // Calculate total for display using the new function
   const totalAmount = getCartTotal();
+
+  // Function to send WhatsApp message with order details
+  const sendWhatsAppOrderMessage = async (orderData: any, deliveryInfo: any) => {
+    try {
+      const whatsappNumber = "201008397114";
+      
+      // Format order items with better structure
+      const orderItemsText = orderData.items.map((item: any, index: number) => {
+        let itemText = `*${index + 1}-
+         ${item.productName}*`;
+        itemText += `\n   الكمية: ${item.quantity}`;
+        
+        if (item.selectedSize) {
+          itemText += `\n   الحجم: ${item.selectedSize.label}`;
+        }
+        
+        if (item.selectedColor) {
+          itemText += `\n   اللون: ${item.selectedColor}`;
+        }
+        
+        if (item.selectedAddons && item.selectedAddons.length > 0) {
+          const addonsText = item.selectedAddons.map((addon: any) => addon.label).join(', ');
+          itemText += `\n   الإضافات: ${addonsText}`;
+        }
+        
+        itemText += `\n   السعر: ${formatCurrency(item.totalPrice, 'جنيه')}`;
+        
+        return itemText;
+      }).join('\n\n');
+
+      // Format delivery information with better structure
+      const deliveryText = `*معلومات التوصيل:*
+الاسم: ${deliveryInfo.fullName}
+الهاتف: ${deliveryInfo.phoneNumber}
+العنوان: ${deliveryInfo.address}
+المدينة: ${deliveryInfo.city}
+${deliveryInfo.notes ? `ملاحظات: ${deliveryInfo.notes}` : ''}`;
+
+      // Create the complete message with improved formatting
+      const message = `*طلب جديد من المتجر*
+
+${'='.repeat(30)}
+
+*تفاصيل الطلب:*
+${orderItemsText}
+
+${'='.repeat(30)}
+
+*المجموع الكلي: ${formatCurrency(orderData.total, 'جنيه')}*
+
+${'='.repeat(30)}
+
+${deliveryText}
+
+${'='.repeat(30)}
+
+*رقم الطلب:* ${orderData.userId.slice(-8)}
+*التاريخ:* ${new Date().toLocaleDateString('ar-EG')}
+*الوقت:* ${new Date().toLocaleTimeString('ar-EG')}
+
+${'='.repeat(30)}
+${'='.repeat(30)}
+
+*تم إرسال هذا الطلب تلقائياً من نظام المتجر*`;
+
+      // Create WhatsApp URL
+      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+      
+      // Open WhatsApp in a new tab
+      window.open(whatsappUrl, '_blank');
+      
+      console.log('WhatsApp message sent successfully');
+    } catch (error) {
+      console.error('Error sending WhatsApp message:', error);
+      // Don't show error to user as this is not critical
+    }
+  };
 
   // Function to save order to Firebase
   const saveOrderToFirebase = async () => {
@@ -212,6 +291,9 @@ const Cart = () => {
       
       toast.success("تم حفظ الطلب بنجاح");
       
+      // Send WhatsApp message with order details
+      await sendWhatsAppOrderMessage(orderData, deliveryInfo);
+      
       // Clear cart after successful order
       clearCart();
       
@@ -240,8 +322,14 @@ const Cart = () => {
   };
 
   const handleCompleteProfile = () => {
+    // Check if user is logged in
+    if (!userProfile) {
+      setShowLoginRequiredModal(true);
+      return;
+    }
     navigate("/settings");
   };
+
 
   const handleWhatsAppOrder = () => {
     if (!hasCompleteDeliveryInfo) {
@@ -768,6 +856,12 @@ const Cart = () => {
           open={modalOpen}
           onOpenChange={setModalOpen}
           hideAddToCart={true}
+        />
+
+        {/* Login Required Modal */}
+        <LoginRequiredModal
+          open={showLoginRequiredModal}
+          onOpenChange={setShowLoginRequiredModal}
         />
       </main>
     </div>

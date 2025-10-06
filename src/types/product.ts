@@ -42,6 +42,32 @@ export const ProductSchema = z.object({
   costs: z.object({
     base_cost: z.number().optional(), // Base cost for profit calculation
   }).optional(),
+  // Processor specifications
+  processor: z.object({
+    name: z.string().optional(), // Processor name (e.g., "Intel Core i7-12700K")
+    cacheMemory: z.string().optional(), // Cache memory in MB
+    baseClockSpeed: z.number().optional(), // Base clock speed in GHz
+    maxTurboSpeed: z.number().optional(), // Max turbo speed in GHz
+    cores: z.number().optional(), // Number of cores
+    threads: z.number().optional(), // Number of threads
+    integratedGraphics: z.string().optional(), // Integrated graphics
+  }).optional(),
+  // Dedicated Graphics Card specifications
+  dedicatedGraphics: z.object({
+    hasDedicatedGraphics: z.boolean().optional(), // Whether the product has dedicated graphics
+    name: z.string().optional(), // Graphics card name/model
+    manufacturer: z.string().optional(), // Manufacturer (NVIDIA, AMD, etc.)
+    vram: z.number().optional(), // VRAM in GB
+    memoryType: z.string().optional(), // Memory type (GDDR6, GDDR6X, etc.)
+    memorySpeed: z.number().optional(), // Memory speed in MHz
+    memoryBusWidth: z.number().optional(), // Memory bus width in bits
+    baseClock: z.number().optional(), // Base clock in MHz
+    boostClock: z.number().optional(), // Boost clock in MHz
+    powerConsumption: z.number().optional(), // Power consumption in Watts
+    powerConnectors: z.array(z.string()).optional(), // Power connectors required
+    availablePorts: z.array(z.string()).optional(), // Available ports
+    gamingTechnologies: z.array(z.string()).optional(), // Gaming technologies supported
+  }).optional(),
   wholesaleInfo: z
     .object({
       supplierName: z.string(),

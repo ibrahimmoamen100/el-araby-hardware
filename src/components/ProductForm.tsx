@@ -58,6 +58,56 @@ const fixedCategories = [
   "other",
 ];
 
+// Cache memory options
+const cacheMemoryOptions = ["8MB", "12MB", "16MB", "20MB", "24MB", "32MB"];
+
+// Integrated graphics options
+const integratedGraphicsOptions = [
+  "Intel UHD Graphics 770",
+  "Intel UHD Graphics 630",
+  "Intel Iris Xe Graphics",
+  "AMD Radeon Graphics",
+  "AMD Radeon Vega 8",
+  "لا يوجد"
+];
+
+// Graphics card options
+const graphicsCardOptions = [
+  "RTX 4090", "RTX 4080", "RTX 4070", "RTX 4060",
+  "RTX 3080", "RTX 3070", "RTX 3060", "RTX 3050",
+  "GTX 1660 Ti", "GTX 1650",
+  "RX 7900 XTX", "RX 7900 XT", "RX 7800 XT",
+  "RX 6800 XT", "RX 6700 XT", "RX 6600 XT",
+  "RX 5700 XT", "RX 5600 XT"
+];
+
+// Graphics card manufacturers
+const graphicsManufacturers = ["NVIDIA", "AMD", "Intel Arc", "أخرى"];
+
+// VRAM options
+const vramOptions = [2, 4, 6, 8, 12, 16, 24, 48];
+
+// Memory type options
+const memoryTypeOptions = ["GDDR6X", "GDDR6", "GDDR5", "HBM2", "HBM3", "أخرى"];
+
+// Memory bus width options
+const memoryBusWidthOptions = [64, 128, 192, 256, 320, 384, 512];
+
+// Power connector options
+const powerConnectorOptions = ["6-pin", "8-pin", "12-pin", "16-pin", "لا يتطلب موصل إضافي"];
+
+// Available ports options
+const availablePortsOptions = [
+  "HDMI 2.1", "DisplayPort 1.4", "DisplayPort 2.1", 
+  "DVI-D", "USB-C", "VGA"
+];
+
+// Gaming technologies options
+const gamingTechnologiesOptions = [
+  "Ray Tracing", "DLSS", "FSR", "G-Sync Compatible", 
+  "FreeSync", "DirectX 12 Ultimate"
+];
+
 export function ProductForm({ onSubmit }: ProductFormProps) {
   const { products } = useStore();
   const { t } = useTranslation();
@@ -83,6 +133,30 @@ export function ProductForm({ onSubmit }: ProductFormProps) {
     sizes: [] as Array<{ id: string; label: string; price: string }>,
     addons: [] as Array<{ id: string; label: string; price_delta: string }>,
     baseCost: "",
+    processor: {
+      name: "",
+      cacheMemory: "",
+      baseClockSpeed: "",
+      maxTurboSpeed: "",
+      cores: "",
+      threads: "",
+      integratedGraphics: "",
+    },
+    dedicatedGraphics: {
+      hasDedicatedGraphics: false,
+      name: "",
+      manufacturer: "",
+      vram: "",
+      memoryType: "",
+      memorySpeed: "",
+      memoryBusWidth: "",
+      baseClock: "",
+      boostClock: "",
+      powerConsumption: "",
+      powerConnectors: [],
+      availablePorts: [],
+      gamingTechnologies: [],
+    },
     wholesaleInfo: {
       supplierName: "",
       supplierPhone: "",
@@ -120,6 +194,8 @@ export function ProductForm({ onSubmit }: ProductFormProps) {
   const [showCustomCategory, setShowCustomCategory] = useState(false);
   const [discountPrice, setDiscountPrice] = useState("");
   const [showWholesaleInfo, setShowWholesaleInfo] = useState(false);
+  const [showProcessorInfo, setShowProcessorInfo] = useState(false);
+  const [showDedicatedGraphicsInfo, setShowDedicatedGraphicsInfo] = useState(false);
 
   // Functions to manage sizes
   const addSize = () => {
@@ -310,6 +386,34 @@ export function ProductForm({ onSubmit }: ProductFormProps) {
           price_delta: Number(addon.price_delta)
         }));
 
+      // Process processor data
+      const processedProcessor = showProcessorInfo && formData.processor ? {
+        name: formData.processor.name || undefined,
+        cacheMemory: formData.processor.cacheMemory || undefined,
+        baseClockSpeed: formData.processor.baseClockSpeed ? Number(formData.processor.baseClockSpeed) : undefined,
+        maxTurboSpeed: formData.processor.maxTurboSpeed ? Number(formData.processor.maxTurboSpeed) : undefined,
+        cores: formData.processor.cores ? Number(formData.processor.cores) : undefined,
+        threads: formData.processor.threads ? Number(formData.processor.threads) : undefined,
+        integratedGraphics: formData.processor.integratedGraphics || undefined,
+      } : undefined;
+
+      // Process dedicated graphics data
+      const processedDedicatedGraphics = showDedicatedGraphicsInfo && formData.dedicatedGraphics ? {
+        hasDedicatedGraphics: formData.dedicatedGraphics.hasDedicatedGraphics || false,
+        name: formData.dedicatedGraphics.name || undefined,
+        manufacturer: formData.dedicatedGraphics.manufacturer || undefined,
+        vram: formData.dedicatedGraphics.vram ? Number(formData.dedicatedGraphics.vram) : undefined,
+        memoryType: formData.dedicatedGraphics.memoryType || undefined,
+        memorySpeed: formData.dedicatedGraphics.memorySpeed ? Number(formData.dedicatedGraphics.memorySpeed) : undefined,
+        memoryBusWidth: formData.dedicatedGraphics.memoryBusWidth ? Number(formData.dedicatedGraphics.memoryBusWidth) : undefined,
+        baseClock: formData.dedicatedGraphics.baseClock ? Number(formData.dedicatedGraphics.baseClock) : undefined,
+        boostClock: formData.dedicatedGraphics.boostClock ? Number(formData.dedicatedGraphics.boostClock) : undefined,
+        powerConsumption: formData.dedicatedGraphics.powerConsumption ? Number(formData.dedicatedGraphics.powerConsumption) : undefined,
+        powerConnectors: formData.dedicatedGraphics.powerConnectors || [],
+        availablePorts: formData.dedicatedGraphics.availablePorts || [],
+        gamingTechnologies: formData.dedicatedGraphics.gamingTechnologies || [],
+      } : undefined;
+
       const product = {
         ...formData,
         brand: finalBrand,
@@ -321,6 +425,8 @@ export function ProductForm({ onSubmit }: ProductFormProps) {
         sizes: processedSizes,
         addons: processedAddons,
         costs: formData.baseCost ? { base_cost: Number(formData.baseCost) } : undefined,
+        processor: processedProcessor,
+        dedicatedGraphics: processedDedicatedGraphics,
         discountPercentage: formData.specialOffer && formData.discountPercentage
           ? Number(formData.discountPercentage)
           : null,
@@ -356,6 +462,8 @@ export function ProductForm({ onSubmit }: ProductFormProps) {
       setShowCustomCategory(false);
       setDiscountPrice("");
       setShowWholesaleInfo(false);
+      setShowProcessorInfo(false);
+      setShowDedicatedGraphicsInfo(false);
       toast.success("تمت إضافة المنتج بنجاح");
     } catch (error) {
       console.error("خطأ في إضافة المنتج:", error);
@@ -1374,6 +1482,699 @@ export function ProductForm({ onSubmit }: ProductFormProps) {
             onChange={(e) => setFormData({...formData, baseCost: e.target.value})}
           />
         </div>
+      </div>
+
+      {/* Processor Specifications Section */}
+      <div className="rounded-md border p-4 space-y-4">
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="processor-info"
+            checked={showProcessorInfo}
+            onCheckedChange={(checked) => {
+              setShowProcessorInfo(checked);
+              if (!checked) {
+                setFormData({
+                  ...formData,
+                  processor: {
+                    name: "",
+                    cacheMemory: "",
+                    baseClockSpeed: "",
+                    maxTurboSpeed: "",
+                    cores: "",
+                    threads: "",
+                    integratedGraphics: "",
+                  },
+                });
+              } else if (!formData.processor) {
+                setFormData({
+                  ...formData,
+                  processor: {
+                    name: "",
+                    cacheMemory: "",
+                    baseClockSpeed: "",
+                    maxTurboSpeed: "",
+                    cores: "",
+                    threads: "",
+                    integratedGraphics: "",
+                  },
+                });
+              }
+            }}
+          />
+          <Label htmlFor="processor-info" className="font-medium">
+            مواصفات المعالج
+          </Label>
+        </div>
+
+        {showProcessorInfo && formData.processor && (
+          <div className="grid gap-4 sm:grid-cols-2 pt-2">
+            <div>
+              <label className="text-sm font-medium">اسم المعالج *</label>
+              <Input
+                value={formData.processor.name}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    processor: {
+                      ...formData.processor,
+                      name: e.target.value,
+                    },
+                  })
+                }
+                placeholder="مثال: Intel Core i7-12700K"
+                maxLength={100}
+              />
+            </div>
+            
+            <div>
+              <label className="text-sm font-medium">ذاكرة التخزين المؤقت</label>
+              <Select
+                value={formData.processor.cacheMemory}
+                onValueChange={(value) =>
+                  setFormData({
+                    ...formData,
+                    processor: {
+                      ...formData.processor,
+                      cacheMemory: value,
+                    },
+                  })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="اختر ذاكرة التخزين المؤقت" />
+                </SelectTrigger>
+                <SelectContent>
+                  {cacheMemoryOptions.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                  <SelectItem value="custom">قيمة مخصصة</SelectItem>
+                </SelectContent>
+              </Select>
+              {formData.processor.cacheMemory === "custom" && (
+                <Input
+                  className="mt-2"
+                  placeholder="أدخل القيمة المخصصة"
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      processor: {
+                        ...formData.processor,
+                        cacheMemory: e.target.value,
+                      },
+                    })
+                  }
+                />
+              )}
+            </div>
+
+            <div>
+              <label className="text-sm font-medium">سرعة المعالج الأساسية (GHz)</label>
+              <Input
+                type="number"
+                min="1.0"
+                max="5.0"
+                step="0.01"
+                value={formData.processor.baseClockSpeed}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    processor: {
+                      ...formData.processor,
+                      baseClockSpeed: e.target.value,
+                    },
+                  })
+                }
+                placeholder="مثال: 3.60"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium">أقصى سرعة تيربو (GHz)</label>
+              <Input
+                type="number"
+                min="1.0"
+                max="6.0"
+                step="0.01"
+                value={formData.processor.maxTurboSpeed}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    processor: {
+                      ...formData.processor,
+                      maxTurboSpeed: e.target.value,
+                    },
+                  })
+                }
+                placeholder="مثال: 4.90"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium">عدد النوى</label>
+              <Input
+                type="number"
+                min="2"
+                max="64"
+                value={formData.processor.cores}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    processor: {
+                      ...formData.processor,
+                      cores: e.target.value,
+                    },
+                  })
+                }
+                placeholder="مثال: 8"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium">عدد الخيوط</label>
+              <Input
+                type="number"
+                min="2"
+                max="128"
+                value={formData.processor.threads}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    processor: {
+                      ...formData.processor,
+                      threads: e.target.value,
+                    },
+                  })
+                }
+                placeholder="مثال: 16"
+              />
+            </div>
+
+            <div className="sm:col-span-2">
+              <label className="text-sm font-medium">كرت الشاشة الداخلي</label>
+              <Select
+                value={formData.processor.integratedGraphics}
+                onValueChange={(value) =>
+                  setFormData({
+                    ...formData,
+                    processor: {
+                      ...formData.processor,
+                      integratedGraphics: value,
+                    },
+                  })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="اختر كرت الشاشة الداخلي" />
+                </SelectTrigger>
+                <SelectContent>
+                  {integratedGraphicsOptions.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                  <SelectItem value="custom">قيمة مخصصة</SelectItem>
+                </SelectContent>
+              </Select>
+              {formData.processor.integratedGraphics === "custom" && (
+                <Input
+                  className="mt-2"
+                  placeholder="أدخل كرت الشاشة المخصص"
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      processor: {
+                        ...formData.processor,
+                        integratedGraphics: e.target.value,
+                      },
+                    })
+                  }
+                />
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Dedicated Graphics Card Section */}
+      <div className="rounded-md border p-4 space-y-4">
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="dedicated-graphics-info"
+            checked={showDedicatedGraphicsInfo}
+            onCheckedChange={(checked) => {
+              setShowDedicatedGraphicsInfo(checked);
+              if (!checked) {
+                setFormData({
+                  ...formData,
+                  dedicatedGraphics: {
+                    hasDedicatedGraphics: false,
+                    name: "",
+                    manufacturer: "",
+                    vram: "",
+                    memoryType: "",
+                    memorySpeed: "",
+                    memoryBusWidth: "",
+                    baseClock: "",
+                    boostClock: "",
+                    powerConsumption: "",
+                    powerConnectors: [],
+                    availablePorts: [],
+                    gamingTechnologies: [],
+                  },
+                });
+              } else if (!formData.dedicatedGraphics) {
+                setFormData({
+                  ...formData,
+                  dedicatedGraphics: {
+                    hasDedicatedGraphics: false,
+                    name: "",
+                    manufacturer: "",
+                    vram: "",
+                    memoryType: "",
+                    memorySpeed: "",
+                    memoryBusWidth: "",
+                    baseClock: "",
+                    boostClock: "",
+                    powerConsumption: "",
+                    powerConnectors: [],
+                    availablePorts: [],
+                    gamingTechnologies: [],
+                  },
+                });
+              }
+            }}
+          />
+          <Label htmlFor="dedicated-graphics-info" className="font-medium">
+            كرت الشاشة الخارجي
+          </Label>
+        </div>
+
+        {showDedicatedGraphicsInfo && formData.dedicatedGraphics && (
+          <div className="space-y-6 pt-2">
+            {/* Has Dedicated Graphics Toggle */}
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="has-dedicated-graphics"
+                checked={formData.dedicatedGraphics.hasDedicatedGraphics}
+                onCheckedChange={(checked) =>
+                  setFormData({
+                    ...formData,
+                    dedicatedGraphics: {
+                      ...formData.dedicatedGraphics,
+                      hasDedicatedGraphics: checked,
+                    },
+                  })
+                }
+              />
+              <Label htmlFor="has-dedicated-graphics" className="font-medium">
+                يوجد كرت شاشة خارجي
+              </Label>
+            </div>
+
+            {formData.dedicatedGraphics.hasDedicatedGraphics && (
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="text-sm font-medium">اسم/موديل كرت الشاشة *</label>
+                  <Select
+                    value={formData.dedicatedGraphics.name}
+                    onValueChange={(value) =>
+                      setFormData({
+                        ...formData,
+                        dedicatedGraphics: {
+                          ...formData.dedicatedGraphics,
+                          name: value,
+                        },
+                      })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="اختر كرت الشاشة" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {graphicsCardOptions.map((option) => (
+                        <SelectItem key={option} value={option}>
+                          {option}
+                        </SelectItem>
+                      ))}
+                      <SelectItem value="custom">موديل مخصص</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {formData.dedicatedGraphics.name === "custom" && (
+                    <Input
+                      className="mt-2"
+                      placeholder="أدخل اسم كرت الشاشة المخصص"
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          dedicatedGraphics: {
+                            ...formData.dedicatedGraphics,
+                            name: e.target.value,
+                          },
+                        })
+                      }
+                    />
+                  )}
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">الشركة المصنعة *</label>
+                  <Select
+                    value={formData.dedicatedGraphics.manufacturer}
+                    onValueChange={(value) =>
+                      setFormData({
+                        ...formData,
+                        dedicatedGraphics: {
+                          ...formData.dedicatedGraphics,
+                          manufacturer: value,
+                        },
+                      })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="اختر الشركة المصنعة" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {graphicsManufacturers.map((option) => (
+                        <SelectItem key={option} value={option}>
+                          {option}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {formData.dedicatedGraphics.manufacturer === "أخرى" && (
+                    <Input
+                      className="mt-2"
+                      placeholder="أدخل اسم الشركة المصنعة"
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          dedicatedGraphics: {
+                            ...formData.dedicatedGraphics,
+                            manufacturer: e.target.value,
+                          },
+                        })
+                      }
+                    />
+                  )}
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">ذاكرة كرت الشاشة (GB)</label>
+                  <Select
+                    value={formData.dedicatedGraphics.vram}
+                    onValueChange={(value) =>
+                      setFormData({
+                        ...formData,
+                        dedicatedGraphics: {
+                          ...formData.dedicatedGraphics,
+                          vram: value,
+                        },
+                      })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="اختر حجم الذاكرة" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {vramOptions.map((option) => (
+                        <SelectItem key={option} value={option.toString()}>
+                          {option} GB
+                        </SelectItem>
+                      ))}
+                      <SelectItem value="custom">قيمة مخصصة</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {formData.dedicatedGraphics.vram === "custom" && (
+                    <Input
+                      className="mt-2"
+                      type="number"
+                      min="1"
+                      max="128"
+                      placeholder="أدخل حجم الذاكرة (GB)"
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          dedicatedGraphics: {
+                            ...formData.dedicatedGraphics,
+                            vram: e.target.value,
+                          },
+                        })
+                      }
+                    />
+                  )}
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">نوع الذاكرة</label>
+                  <Select
+                    value={formData.dedicatedGraphics.memoryType}
+                    onValueChange={(value) =>
+                      setFormData({
+                        ...formData,
+                        dedicatedGraphics: {
+                          ...formData.dedicatedGraphics,
+                          memoryType: value,
+                        },
+                      })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="اختر نوع الذاكرة" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {memoryTypeOptions.map((option) => (
+                        <SelectItem key={option} value={option}>
+                          {option}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">سرعة الذاكرة (MHz)</label>
+                  <Input
+                    type="number"
+                    min="1000"
+                    max="25000"
+                    value={formData.dedicatedGraphics.memorySpeed}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        dedicatedGraphics: {
+                          ...formData.dedicatedGraphics,
+                          memorySpeed: e.target.value,
+                        },
+                      })
+                    }
+                    placeholder="مثال: 19500"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">عرض ناقل الذاكرة (bit)</label>
+                  <Select
+                    value={formData.dedicatedGraphics.memoryBusWidth}
+                    onValueChange={(value) =>
+                      setFormData({
+                        ...formData,
+                        dedicatedGraphics: {
+                          ...formData.dedicatedGraphics,
+                          memoryBusWidth: value,
+                        },
+                      })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="اختر عرض الناقل" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {memoryBusWidthOptions.map((option) => (
+                        <SelectItem key={option} value={option.toString()}>
+                          {option} bit
+                        </SelectItem>
+                      ))}
+                      <SelectItem value="custom">قيمة مخصصة</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {formData.dedicatedGraphics.memoryBusWidth === "custom" && (
+                    <Input
+                      className="mt-2"
+                      type="number"
+                      min="64"
+                      max="1024"
+                      placeholder="أدخل عرض الناقل (bit)"
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          dedicatedGraphics: {
+                            ...formData.dedicatedGraphics,
+                            memoryBusWidth: e.target.value,
+                          },
+                        })
+                      }
+                    />
+                  )}
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">التردد الأساسي (MHz)</label>
+                  <Input
+                    type="number"
+                    min="300"
+                    max="3000"
+                    value={formData.dedicatedGraphics.baseClock}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        dedicatedGraphics: {
+                          ...formData.dedicatedGraphics,
+                          baseClock: e.target.value,
+                        },
+                      })
+                    }
+                    placeholder="مثال: 1500"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">تردد التعزيز (MHz)</label>
+                  <Input
+                    type="number"
+                    min="500"
+                    max="4000"
+                    value={formData.dedicatedGraphics.boostClock}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        dedicatedGraphics: {
+                          ...formData.dedicatedGraphics,
+                          boostClock: e.target.value,
+                        },
+                      })
+                    }
+                    placeholder="مثال: 1800"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">استهلاك الطاقة (W)</label>
+                  <Input
+                    type="number"
+                    min="30"
+                    max="800"
+                    value={formData.dedicatedGraphics.powerConsumption}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        dedicatedGraphics: {
+                          ...formData.dedicatedGraphics,
+                          powerConsumption: e.target.value,
+                        },
+                      })
+                    }
+                    placeholder="مثال: 300"
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="text-sm font-medium">موصلات الطاقة المطلوبة</label>
+                  <div className="grid grid-cols-2 gap-2 mt-2">
+                    {powerConnectorOptions.map((option) => (
+                      <div key={option} className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          id={`power-${option}`}
+                          checked={formData.dedicatedGraphics.powerConnectors.includes(option)}
+                          onChange={(e) => {
+                            const newConnectors = e.target.checked
+                              ? [...formData.dedicatedGraphics.powerConnectors, option]
+                              : formData.dedicatedGraphics.powerConnectors.filter(conn => conn !== option);
+                            setFormData({
+                              ...formData,
+                              dedicatedGraphics: {
+                                ...formData.dedicatedGraphics,
+                                powerConnectors: newConnectors,
+                              },
+                            });
+                          }}
+                          className="rounded"
+                        />
+                        <label htmlFor={`power-${option}`} className="text-sm">
+                          {option}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="text-sm font-medium">المنافذ المتوفرة</label>
+                  <div className="grid grid-cols-2 gap-2 mt-2">
+                    {availablePortsOptions.map((option) => (
+                      <div key={option} className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          id={`port-${option}`}
+                          checked={formData.dedicatedGraphics.availablePorts.includes(option)}
+                          onChange={(e) => {
+                            const newPorts = e.target.checked
+                              ? [...formData.dedicatedGraphics.availablePorts, option]
+                              : formData.dedicatedGraphics.availablePorts.filter(port => port !== option);
+                            setFormData({
+                              ...formData,
+                              dedicatedGraphics: {
+                                ...formData.dedicatedGraphics,
+                                availablePorts: newPorts,
+                              },
+                            });
+                          }}
+                          className="rounded"
+                        />
+                        <label htmlFor={`port-${option}`} className="text-sm">
+                          {option}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="text-sm font-medium">تقنيات الألعاب المدعومة</label>
+                  <div className="grid grid-cols-2 gap-2 mt-2">
+                    {gamingTechnologiesOptions.map((option) => (
+                      <div key={option} className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          id={`tech-${option}`}
+                          checked={formData.dedicatedGraphics.gamingTechnologies.includes(option)}
+                          onChange={(e) => {
+                            const newTechnologies = e.target.checked
+                              ? [...formData.dedicatedGraphics.gamingTechnologies, option]
+                              : formData.dedicatedGraphics.gamingTechnologies.filter(tech => tech !== option);
+                            setFormData({
+                              ...formData,
+                              dedicatedGraphics: {
+                                ...formData.dedicatedGraphics,
+                                gamingTechnologies: newTechnologies,
+                              },
+                            });
+                          }}
+                          className="rounded"
+                        />
+                        <label htmlFor={`tech-${option}`} className="text-sm">
+                          {option}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <Button type="submit" className="w-full">
