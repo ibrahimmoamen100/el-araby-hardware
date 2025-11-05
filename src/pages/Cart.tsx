@@ -70,6 +70,7 @@ const Cart = () => {
   const [showClearCartAlert, setShowClearCartAlert] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showLoginRequiredModal, setShowLoginRequiredModal] = useState(false);
+  const [showDeliveryForm, setShowDeliveryForm] = useState(false);
   const navigate = useNavigate();
 
   const {
@@ -79,9 +80,9 @@ const Cart = () => {
     formState: { errors },
   } = useForm<DeliveryFormData>({
     defaultValues: {
-      fullName: userProfile?.displayName || "",
-      phoneNumber: userProfile?.phone || "",
-      address: userProfile?.address || "",
+      fullName: "",
+      phoneNumber: "",
+      address: "",
       city: "",
       notes: "",
     },
@@ -90,12 +91,8 @@ const Cart = () => {
   // Watch form fields for validation
   const notes = watch("notes");
 
-  // Check if user has complete delivery information
-  const hasCompleteDeliveryInfo = userProfile && 
-    userProfile.displayName && 
-    userProfile.phone && 
-    userProfile.address &&
-    userProfile.city;
+  // Delivery info completeness driven by form state (guest checkout)
+  const hasCompleteDeliveryInfo = false;
 
   // Group cart items by supplier for WhatsApp messaging only
   const supplierGroupsForMessaging: SupplierGroup[] = cart.reduce(
@@ -208,107 +205,63 @@ ${'='.repeat(30)}
     }
   };
 
-  // Function to save order to Firebase
-  const saveOrderToFirebase = async () => {
-    if (!userProfile) {
-      toast.error("يرجى تسجيل الدخول أولاً");
-      return;
-    }
-
-    if (!hasCompleteDeliveryInfo) {
-      toast.error("يرجى إكمال معلومات التوصيل في الإعدادات أولاً");
-      navigate("/settings");
-      return;
-    }
-
+  // Guest checkout: save order using form payload
+  const saveOrderToFirebase = async (formData: DeliveryFormData) => {
     setIsSubmitting(true);
     try {
-      console.log('Saving order for user:', userProfile.uid);
-      console.log('User profile:', userProfile);
-      
-      const orderItems = cart.map((item) => {
-        return {
-          productId: item.product.id,
-          productName: item.product.name,
-          quantity: item.quantity,
-          price: item.unitFinalPrice, // Use the calculated final price
-          totalPrice: item.totalPrice,
-          image: item.product.images[0],
-          selectedSize: item.selectedSize ? {
-            id: item.selectedSize.id,
-            label: item.selectedSize.label,
-            price: item.selectedSize.price
-          } : null,
-          selectedAddons: item.selectedAddons.map(addon => ({
-            id: addon.id,
-            label: addon.label,
-            price_delta: addon.price_delta
-          })),
-          selectedColor: item.selectedColor
-        };
-      });
+      // Basic phone validation (Egypt): 01X followed by 8 digits
+      const egyptPhoneRegex = /^01[0-2,5][0-9]{8}$/;
+      if (!egyptPhoneRegex.test(formData.phoneNumber)) {
+        toast.error("رقم الهاتف غير صالح");
+        setIsSubmitting(false);
+        return;
+      }
 
-      const deliveryInfo = {
-        fullName: userProfile.displayName,
-        phoneNumber: userProfile.phone,
-        address: userProfile.address,
-        city: userProfile.city,
-        notes: notes || "",
-      };
-
-      const orderData = {
-        userId: userProfile.uid,
-        items: orderItems,
-        total: totalAmount,
-        status: 'pending',
-        deliveryInfo: deliveryInfo,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-
-      console.log('Order data to save:', orderData);
-
-      const docRef = await addDoc(collection(db, 'orders'), orderData);
-      console.log('Order saved with ID:', docRef.id);
-      
-      // Get latest products from store to ensure we have current quantities
-      // Prepare quantity updates for atomic transaction
-      const quantityUpdates = cart.map(item => ({
+      const orderItems = cart.map((item) => ({
         productId: item.product.id,
-        quantityToDeduct: item.quantity
+        productName: item.product.name,
+        quantity: item.quantity,
+        price: item.unitFinalPrice,
+        totalPrice: item.totalPrice,
+        image: item.product.images[0],
+        selectedSize: item.selectedSize ? {
+          id: item.selectedSize.id,
+          label: item.selectedSize.label,
+          price: item.selectedSize.price
+        } : null,
+        selectedAddons: item.selectedAddons.map(addon => ({ id: addon.id, label: addon.label, price_delta: addon.price_delta })),
+        selectedColor: item.selectedColor
       }));
 
-      console.log('Cart: Preparing atomic quantity updates:', quantityUpdates.map(update => ({
-        productId: update.productId,
-        productName: cart.find(item => item.product.id === update.productId)?.product.name,
-        quantityToDeduct: update.quantityToDeduct
-      })));
-      
-      // Update all product quantities atomically to prevent race conditions
-      console.log('Cart: Executing atomic quantity update...');
+      const orderDoc = {
+        customerName: formData.fullName,
+        phone: formData.phoneNumber,
+        governorate: formData.city,
+        address: formData.address,
+        note: formData.notes || "",
+        orderItems,
+        createdAt: new Date(),
+        total: totalAmount,
+        status: 'pending',
+      } as const;
+
+      const docRef = await addDoc(collection(db, 'orders'), orderDoc);
+      console.log('Order saved with ID:', docRef.id);
+
+      // Optionally update stock
+      const quantityUpdates = cart.map(item => ({ productId: item.product.id, quantityToDeduct: item.quantity }));
       await updateProductQuantitiesAtomically(quantityUpdates);
-      console.log('Cart: Atomic quantity update completed successfully');
-      
-      toast.success("تم حفظ الطلب بنجاح");
-      
-      // Send WhatsApp message with order details
-      await sendWhatsAppOrderMessage(orderData, deliveryInfo);
-      
-      // Clear cart after successful order
+
+      toast.success("تم حفظ معلومات التوصيل بنجاح. يمكنك الآن إتمام الطلب.");
       clearCart();
-      
-      // Reload products to ensure we have the latest data
-      console.log('Reloading products after order completion...');
       await useStore.getState().loadProducts();
-      console.log('Products reloaded successfully');
-      
-      // Navigate to orders page
       navigate("/orders");
     } catch (error) {
       console.error('Error saving order:', error);
       toast.error("فشل في حفظ الطلب");
     } finally {
       setIsSubmitting(false);
+      setShowDeliveryForm(false);
     }
   };
 
@@ -322,12 +275,7 @@ ${'='.repeat(30)}
   };
 
   const handleCompleteProfile = () => {
-    // Check if user is logged in
-    if (!userProfile) {
-      setShowLoginRequiredModal(true);
-      return;
-    }
-    navigate("/settings");
+    setShowDeliveryForm(true);
   };
 
 
@@ -359,17 +307,7 @@ ${'='.repeat(30)}
     window.open(whatsappUrl, "_blank");
   };
 
-  // Show loading state while authentication is being determined
-  if (authLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto mb-4"></div>
-          <p className="text-gray-600">جاري التحميل...</p>
-        </div>
-      </div>
-    );
-  }
+  // We no longer require authentication for checkout
 
   if (cart.length === 0) {
     return (
@@ -606,7 +544,7 @@ ${'='.repeat(30)}
               </h2>
 
               {/* Delivery Info Display */}
-              {hasCompleteDeliveryInfo ? (
+              {false ? (
                 <div className="space-y-4 mb-6">
                   <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                     <div className="flex items-center gap-3">
@@ -649,9 +587,7 @@ ${'='.repeat(30)}
                     </div>
                     <div>
                       <h4 className="font-medium text-yellow-900">معلومات التوصيل غير مكتملة</h4>
-                      <p className="text-sm text-yellow-700 mb-3">
-                        يرجى إكمال معلومات التوصيل في الإعدادات أولاً
-                      </p>
+                      <p className="text-sm text-yellow-700 mb-3">يرجى إكمال معلومات التوصيل لإتمام الطلب</p>
                       <Button 
                         onClick={handleCompleteProfile}
                         size="sm"
@@ -742,10 +678,10 @@ ${'='.repeat(30)}
                 type="button"
                 size="lg"
                 className="w-full gap-2"
-                disabled={!hasCompleteDeliveryInfo || isSubmitting}
-                onClick={saveOrderToFirebase}
+                onClick={() => setShowDeliveryForm(true)}
+                disabled={isSubmitting}
               >
-                {isSubmitting ? "جاري إتمام الطلب..." : "إتمام الطلب"}
+                {isSubmitting ? "جاري الحفظ..." : "إتمام الطلب"}
               </Button>
               
               {/* Spacing */}
@@ -858,11 +794,83 @@ ${'='.repeat(30)}
           hideAddToCart={true}
         />
 
-        {/* Login Required Modal */}
-        <LoginRequiredModal
-          open={showLoginRequiredModal}
-          onOpenChange={setShowLoginRequiredModal}
-        />
+        {/* Delivery Info Modal */}
+        <AlertDialog open={showDeliveryForm} onOpenChange={setShowDeliveryForm}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>إكمال معلومات التوصيل</AlertDialogTitle>
+              <AlertDialogDescription>
+                يرجى إدخال بياناتك لإتمام الطلب.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <form
+              onSubmit={handleSubmit((data) => saveOrderToFirebase(data))}
+              className="space-y-3"
+            >
+              <div>
+                <label className="block text-sm mb-1">الاسم الكامل</label>
+                <input
+                  className="w-full p-3 border rounded"
+                  {...register('fullName', { required: true, minLength: 3 })}
+                  placeholder="الاسم الثلاثي"
+                />
+                {errors.fullName && (
+                  <p className="text-red-600 text-xs mt-1">الاسم لا يقل عن 3 أحرف</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm mb-1">رقم الهاتف</label>
+                <input
+                  className="w-full p-3 border rounded"
+                  {...register('phoneNumber', { required: true, pattern: /^01[0-2,5][0-9]{8}$/ })}
+                  placeholder="01XXXXXXXXX"
+                />
+                {errors.phoneNumber && (
+                  <p className="text-red-600 text-xs mt-1">رقم هاتف مصري صالح</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm mb-1">المحافظة</label>
+                <input
+                  className="w-full p-3 border rounded"
+                  {...register('city', { required: true })}
+                  placeholder="القاهرة، الجيزة..."
+                />
+                {errors.city && (
+                  <p className="text-red-600 text-xs mt-1">المحافظة مطلوبة</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm mb-1">العنوان بالتفصيل</label>
+                <input
+                  className="w-full p-3 border rounded"
+                  {...register('address', { required: true })}
+                  placeholder="الشارع، رقم المنزل، أقرب علامة مميزة"
+                />
+                {errors.address && (
+                  <p className="text-red-600 text-xs mt-1">العنوان مطلوب</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm mb-1">ملاحظات (اختياري)</label>
+                <textarea
+                  className="w-full p-3 border rounded"
+                  rows={3}
+                  {...register('notes')}
+                  placeholder="أي تفاصيل إضافية للمندوب"
+                />
+              </div>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={isSubmitting}>إلغاء</AlertDialogCancel>
+                <AlertDialogAction asChild>
+                  <button type="submit" disabled={isSubmitting}>
+                    {isSubmitting ? 'جاري الحفظ...' : 'حفظ وإتمام الطلب'}
+                  </button>
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </form>
+          </AlertDialogContent>
+        </AlertDialog>
       </main>
     </div>
   );

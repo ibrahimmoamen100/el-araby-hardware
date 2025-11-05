@@ -21,6 +21,7 @@ const AdminOrders = lazy(() => import("./pages/admin/Orders").catch(() => ({ def
 const AdminAnalytics = lazy(() => import("./pages/admin/Analytics").catch(() => ({ default: () => <div>Error loading AdminAnalytics</div> })));
 const AdminProfitAnalysis = lazy(() => import("./pages/admin/ProfitAnalysis").catch(() => ({ default: () => <div>Error loading AdminProfitAnalysis</div> })));
 const AdminSetup = lazy(() => import("./pages/AdminSetup").catch(() => ({ default: () => <div>Error loading AdminSetup</div> })));
+const ChangePassword = lazy(() => import("./pages/ChangePassword").catch(() => ({ default: () => <div>Error loading ChangePassword</div> })));
 const Cashier = lazy(() => import("./pages/Cashier").catch(() => ({ default: () => <div>Error loading Cashier</div> })));
 const Cart = lazy(() => import("./pages/Cart").catch(() => ({ default: () => <div>Error loading Cart</div> })));
 const Products = lazy(() => import("./pages/Products").catch(() => ({ default: () => <div>Error loading Products</div> })));
@@ -70,6 +71,7 @@ const App = () => (
                     <Route path="/" element={<Index />} />
                     <Route path="/admin" element={<Admin />} />
                     <Route path="/admin/setup" element={<AdminSetup />} />
+                    <Route path="/admin/change-password" element={<ChangePassword />} />
                     <Route path="/admin/orders" element={<AdminOrders />} />
                     <Route path="/admin/analytics" element={<AdminAnalytics />} />
                     <Route path="/admin/profit-analysis" element={<AdminProfitAnalysis />} />

@@ -6,9 +6,12 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Shield, CheckCircle, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
-import { initializeAdminUser } from '@/utils/initializeAdmin';
+import { initializeAdminUserWithUsername } from '@/utils/initializeAdmin';
+import { useNavigate } from 'react-router-dom';
 
 const AdminSetup: React.FC = () => {
+  const navigate = useNavigate();
+  const [username, setUsername] = useState('ibrahim');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -33,11 +36,13 @@ const AdminSetup: React.FC = () => {
     setError('');
 
     try {
-      const result = await initializeAdminUser(email, password);
+      const result = await initializeAdminUserWithUsername(username, email, password);
       
       if (result.success) {
         setSuccess(true);
         toast.success('تم إنشاء حساب المسؤول بنجاح!');
+        // Redirect directly to login page so the login form shows immediately
+        navigate('/admin');
       } else {
         setError(result.error || 'حدث خطأ أثناء إنشاء الحساب');
         toast.error('فشل في إنشاء حساب المسؤول');
@@ -122,6 +127,19 @@ const AdminSetup: React.FC = () => {
                 </AlertDescription>
               </Alert>
             )}
+
+            <div className="space-y-2">
+              <Label htmlFor="username">اسم المستخدم</Label>
+              <Input
+                id="username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="ibrahim"
+                required
+                disabled
+              />
+            </div>
 
             <div className="space-y-2">
               <Label htmlFor="email">البريد الإلكتروني</Label>

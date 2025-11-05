@@ -1,4 +1,4 @@
-import { initializeAdmin } from '@/lib/adminAuth';
+import { initializeAdmin, adminAuthService } from '@/lib/adminAuth';
 
 /**
  * Initialize Admin User Script
@@ -44,4 +44,27 @@ export const initializeAdminUser = async (email: string, password: string) => {
 // Example usage (uncomment and modify as needed):
 // await initializeAdminUser('admin@yourstore.com', 'your-secure-password-123');
 
-export default initializeAdminUser; 
+export const initializeAdminUserWithUsername = async (username: string, email: string, password: string) => {
+  try {
+    console.log('Initializing admin user with username...');
+    if (!username || !email || !password) {
+      throw new Error('Username, email and password are required');
+    }
+    if (password.length < 6) {
+      throw new Error('Password must be at least 6 characters long');
+    }
+    const result = await adminAuthService.initializeAdminUserWithUsername(username, email, password);
+    if (result.success) {
+      console.log('✅ Admin user created successfully with username:', username);
+      return result;
+    } else {
+      console.error('❌ Failed to create admin user:', result.error);
+      return result;
+    }
+  } catch (error: any) {
+    console.error('❌ Error initializing admin user with username:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export default initializeAdminUser;

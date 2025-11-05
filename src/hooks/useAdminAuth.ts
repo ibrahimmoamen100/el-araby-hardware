@@ -7,7 +7,7 @@ interface UseAdminAuthReturn {
   session: AdminSession | null;
   loading: boolean;
   error: string | null;
-  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   verifySession: () => Promise<void>;
 }
@@ -70,13 +70,13 @@ export const useAdminAuth = (): UseAdminAuthReturn => {
   }, []);
 
   // Login function
-  const login = useCallback(async (email: string, password: string) => {
+  const login = useCallback(async (username: string, password: string) => {
     try {
       console.log('🔐 Starting login process...');
       setLoading(true);
       setError(null);
 
-      const result = await adminAuthService.login(email, password);
+      const result = await adminAuthService.login(username, password);
       console.log('🔐 Login result:', result);
       
       if (result.success && result.session) {

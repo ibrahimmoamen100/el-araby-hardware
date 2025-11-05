@@ -250,9 +250,9 @@ const Admin = () => {
   const filteredProducts = filterProductsByDate(products);
 
   // Handle login using the hook's login function
-  const handleLogin = useCallback(async (email: string, password: string) => {
-    console.log('🔐 Admin: handleLogin called with email:', email);
-    const result = await login(email, password);
+  const handleLogin = useCallback(async (username: string, password: string) => {
+    console.log('🔐 Admin: handleLogin called with username:', username);
+    const result = await login(username, password);
     console.log('🔐 Admin: handleLogin result:', result);
     
     if (result.success) {
@@ -279,6 +279,10 @@ const Admin = () => {
           console.log('🔐 Admin: SUCCESS - Authentication confirmed after timeout!');
         }
       }, 200);
+    } else if (!result.success && result.error === 'must_change_password') {
+      localStorage.setItem('pending_password_change_username', username);
+      toast.info('يرجى تغيير كلمة المرور قبل المتابعة');
+      navigate('/admin/change-password');
     }
     
     return result;

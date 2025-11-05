@@ -8,12 +8,12 @@ import { Loader2, Shield, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface AdminLoginProps {
-  onLogin: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  onLogin: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
   loading: boolean;
 }
 
 const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, loading: authLoading }) => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -28,8 +28,8 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, loading: authLoading }
 
     try {
       // Basic validation
-      if (!email.trim()) {
-        setError('يرجى إدخال البريد الإلكتروني');
+      if (!username.trim()) {
+        setError('يرجى إدخال اسم المستخدم');
         setLoading(false);
         return;
       }
@@ -48,8 +48,8 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, loading: authLoading }
 
       // Attempt login using the hook's login function
       console.log('🔐 AdminLogin: Calling onLogin...');
-      console.log('🔐 AdminLogin: Login credentials:', { email: email.trim(), passwordLength: password.length });
-      const result = await onLogin(email.trim(), password);
+      console.log('🔐 AdminLogin: Login credentials:', { username: username.trim(), passwordLength: password.length });
+      const result = await onLogin(username.trim(), password);
       console.log('🔐 AdminLogin: Login result:', result);
       
       if (result.success) {
@@ -58,7 +58,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, loading: authLoading }
         console.log('🔐 AdminLogin: Toast shown, component should re-render');
         
         // Clear form after successful login
-        setEmail('');
+        setUsername('');
         setPassword('');
         setError('');
         
@@ -111,16 +111,16 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, loading: authLoading }
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium text-gray-700">
-                البريد الإلكتروني
+              <Label htmlFor="username" className="text-sm font-medium text-gray-700">
+                اسم المستخدم
               </Label>
               <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="admin@example.com"
+                placeholder="user name"
                 disabled={loading}
                 className="h-11"
                 required
