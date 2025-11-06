@@ -159,12 +159,27 @@ export class FirebaseProductsService {
   // Add new product
   async addProduct(product: Omit<Product, 'id'>): Promise<Product> {
     try {
+      // Check authentication status
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        console.error('❌ Firebase Auth Error: No authenticated user');
+        throw new Error('يجب تسجيل الدخول لحفظ المنتج. يرجى تسجيل الدخول مرة أخرى.');
+      }
+      console.log('✅ Firebase Auth: User authenticated:', currentUser.uid);
+
       const productsRef = collection(db, this.collectionName);
 
       // Clean the product data by removing undefined values
       const cleanProduct = Object.fromEntries(
         Object.entries(product).filter(([_, value]) => value !== undefined)
       );
+      
+      console.log('📦 Firebase: Product data to save:', {
+        processor: cleanProduct.processor,
+        dedicatedGraphics: cleanProduct.dedicatedGraphics,
+        hasProcessor: !!cleanProduct.processor,
+        hasDedicatedGraphics: !!cleanProduct.dedicatedGraphics
+      });
       
       // Convert dates to Firestore Timestamps
       const productData = {
@@ -180,14 +195,31 @@ export class FirebaseProductsService {
 
       // Create document with custom ID equal to the slug
       const docRef = doc(productsRef, uniqueSlug);
+      console.log('💾 Firebase: Saving product to Firestore with document ID:', uniqueSlug);
       await setDoc(docRef, productData);
+      console.log('✅ Firebase: Product saved successfully');
+
+      // Verify the saved data
+      const savedDoc = await getDoc(docRef);
+      if (savedDoc.exists()) {
+        const savedData = savedDoc.data();
+        console.log('✅ Firebase: Verified saved data:', {
+          processor: savedData.processor,
+          dedicatedGraphics: savedData.dedicatedGraphics,
+          hasProcessor: !!savedData.processor,
+          hasDedicatedGraphics: !!savedData.dedicatedGraphics
+        });
+      }
 
       return {
         ...(cleanProduct as any),
         id: uniqueSlug,
       } as Product;
-    } catch (error) {
-      console.error('Error adding product:', error);
+    } catch (error: any) {
+      console.error('❌ Error adding product:', error);
+      if (error.code === 'permission-denied') {
+        throw new Error('فشل في الحفظ: يرجى التأكد من تسجيل الدخول كمسؤول');
+      }
       throw error;
     }
   }
@@ -195,13 +227,28 @@ export class FirebaseProductsService {
   // Update product
   async updateProduct(id: string, product: Partial<Product>): Promise<Product> {
     try {
-      console.log(`Firebase: Updating product ${id} with data:`, product);
+      // Check authentication status
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        console.error('❌ Firebase Auth Error: No authenticated user');
+        throw new Error('يجب تسجيل الدخول لتحديث المنتج. يرجى تسجيل الدخول مرة أخرى.');
+      }
+      console.log('✅ Firebase Auth: User authenticated:', currentUser.uid);
+
+      console.log(`📦 Firebase: Updating product ${id} with data:`, product);
       const docRef = doc(db, this.collectionName, id);
       
       // Clean the product data by removing undefined values
       const cleanProduct = Object.fromEntries(
         Object.entries(product).filter(([_, value]) => value !== undefined)
       );
+      
+      console.log('📦 Firebase: Cleaned product data:', {
+        processor: cleanProduct.processor,
+        dedicatedGraphics: cleanProduct.dedicatedGraphics,
+        hasProcessor: !!cleanProduct.processor,
+        hasDedicatedGraphics: !!cleanProduct.dedicatedGraphics
+      });
       
       // Convert dates to Firestore Timestamps
       const updateData: any = { ...cleanProduct };
@@ -215,15 +262,30 @@ export class FirebaseProductsService {
         updateData.expirationDate = Timestamp.fromDate(new Date((cleanProduct as any).expirationDate));
       }
       
-      console.log(`Firebase: Final update data:`, updateData);
+      console.log(`💾 Firebase: Final update data:`, updateData);
       await updateDoc(docRef, updateData);
-      console.log(`Firebase: Document updated successfully`);
+      console.log(`✅ Firebase: Document updated successfully`);
+      
+      // Verify the updated data
+      const updatedDoc = await getDoc(docRef);
+      if (updatedDoc.exists()) {
+        const updatedData = updatedDoc.data();
+        console.log('✅ Firebase: Verified updated data:', {
+          processor: updatedData.processor,
+          dedicatedGraphics: updatedData.dedicatedGraphics,
+          hasProcessor: !!updatedData.processor,
+          hasDedicatedGraphics: !!updatedData.dedicatedGraphics
+        });
+      }
       
       const updatedProduct = await this.getProductById(id) as Product;
-      console.log(`Firebase: Retrieved updated product:`, updatedProduct);
+      console.log(`✅ Firebase: Retrieved updated product:`, updatedProduct);
       return updatedProduct;
-    } catch (error) {
-      console.error('Error updating product:', error);
+    } catch (error: any) {
+      console.error('❌ Error updating product:', error);
+      if (error.code === 'permission-denied') {
+        throw new Error('فشل في التحديث: يرجى التأكد من تسجيل الدخول كمسؤول');
+      }
       throw error;
     }
   }

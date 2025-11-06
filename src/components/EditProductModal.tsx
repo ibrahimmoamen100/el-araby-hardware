@@ -363,29 +363,71 @@ export function EditProductModal({
     }
 
     try {
-      // Process processor data
-      const processedProcessor = showProcessorInfo && formData.processor ? {
-        name: formData.processor.name || undefined,
-        cacheMemory: formData.processor.cacheMemory || undefined,
-        baseClockSpeed: formData.processor.baseClockSpeed ? Number(formData.processor.baseClockSpeed) : undefined,
-        maxTurboSpeed: formData.processor.maxTurboSpeed ? Number(formData.processor.maxTurboSpeed) : undefined,
-        cores: formData.processor.cores ? Number(formData.processor.cores) : undefined,
-        threads: formData.processor.threads ? Number(formData.processor.threads) : undefined,
-        integratedGraphics: formData.processor.integratedGraphics || undefined,
+      // Helper function to check if a value is a valid number or non-empty string
+      const isValidValue = (val: any): boolean => {
+        if (val === undefined || val === null) return false;
+        if (typeof val === 'number') return true;
+        if (typeof val === 'string') return val.trim() !== '';
+        return false;
+      };
+
+      // Helper function to convert value to number
+      const toNumber = (val: any): number | undefined => {
+        if (val === undefined || val === null) return undefined;
+        if (typeof val === 'number') return val;
+        if (typeof val === 'string' && val.trim() !== '') return Number(val);
+        return undefined;
+      };
+
+      // Process processor data - save if there's actual data, regardless of showProcessorInfo state
+      const hasProcessorData = formData.processor && (
+        (formData.processor.name && typeof formData.processor.name === 'string' && formData.processor.name.trim() !== "") ||
+        (formData.processor.cacheMemory && typeof formData.processor.cacheMemory === 'string' && formData.processor.cacheMemory.trim() !== "") ||
+        isValidValue(formData.processor.baseClockSpeed) ||
+        isValidValue(formData.processor.maxTurboSpeed) ||
+        isValidValue(formData.processor.cores) ||
+        isValidValue(formData.processor.threads) ||
+        (formData.processor.integratedGraphics && typeof formData.processor.integratedGraphics === 'string' && formData.processor.integratedGraphics.trim() !== "")
+      );
+      
+      const processedProcessor = hasProcessorData ? {
+        name: formData.processor.name?.toString().trim() || undefined,
+        cacheMemory: formData.processor.cacheMemory?.toString().trim() || undefined,
+        baseClockSpeed: toNumber(formData.processor.baseClockSpeed),
+        maxTurboSpeed: toNumber(formData.processor.maxTurboSpeed),
+        cores: toNumber(formData.processor.cores),
+        threads: toNumber(formData.processor.threads),
+        integratedGraphics: formData.processor.integratedGraphics?.toString().trim() || undefined,
       } : undefined;
 
-      // Process dedicated graphics data
-      const processedDedicatedGraphics = showDedicatedGraphicsInfo && formData.dedicatedGraphics ? {
+      // Process dedicated graphics data - save if there's actual data, regardless of showDedicatedGraphicsInfo state
+      const hasDedicatedGraphicsData = formData.dedicatedGraphics && (
+        formData.dedicatedGraphics.hasDedicatedGraphics === true ||
+        (formData.dedicatedGraphics.name && typeof formData.dedicatedGraphics.name === 'string' && formData.dedicatedGraphics.name.trim() !== "") ||
+        (formData.dedicatedGraphics.manufacturer && typeof formData.dedicatedGraphics.manufacturer === 'string' && formData.dedicatedGraphics.manufacturer.trim() !== "") ||
+        isValidValue(formData.dedicatedGraphics.vram) ||
+        (formData.dedicatedGraphics.memoryType && typeof formData.dedicatedGraphics.memoryType === 'string' && formData.dedicatedGraphics.memoryType.trim() !== "") ||
+        isValidValue(formData.dedicatedGraphics.memorySpeed) ||
+        isValidValue(formData.dedicatedGraphics.memoryBusWidth) ||
+        isValidValue(formData.dedicatedGraphics.baseClock) ||
+        isValidValue(formData.dedicatedGraphics.boostClock) ||
+        isValidValue(formData.dedicatedGraphics.powerConsumption) ||
+        (formData.dedicatedGraphics.powerConnectors && Array.isArray(formData.dedicatedGraphics.powerConnectors) && formData.dedicatedGraphics.powerConnectors.length > 0) ||
+        (formData.dedicatedGraphics.availablePorts && Array.isArray(formData.dedicatedGraphics.availablePorts) && formData.dedicatedGraphics.availablePorts.length > 0) ||
+        (formData.dedicatedGraphics.gamingTechnologies && Array.isArray(formData.dedicatedGraphics.gamingTechnologies) && formData.dedicatedGraphics.gamingTechnologies.length > 0)
+      );
+      
+      const processedDedicatedGraphics = hasDedicatedGraphicsData ? {
         hasDedicatedGraphics: formData.dedicatedGraphics.hasDedicatedGraphics || false,
-        name: formData.dedicatedGraphics.name || undefined,
-        manufacturer: formData.dedicatedGraphics.manufacturer || undefined,
-        vram: formData.dedicatedGraphics.vram ? Number(formData.dedicatedGraphics.vram) : undefined,
-        memoryType: formData.dedicatedGraphics.memoryType || undefined,
-        memorySpeed: formData.dedicatedGraphics.memorySpeed ? Number(formData.dedicatedGraphics.memorySpeed) : undefined,
-        memoryBusWidth: formData.dedicatedGraphics.memoryBusWidth ? Number(formData.dedicatedGraphics.memoryBusWidth) : undefined,
-        baseClock: formData.dedicatedGraphics.baseClock ? Number(formData.dedicatedGraphics.baseClock) : undefined,
-        boostClock: formData.dedicatedGraphics.boostClock ? Number(formData.dedicatedGraphics.boostClock) : undefined,
-        powerConsumption: formData.dedicatedGraphics.powerConsumption ? Number(formData.dedicatedGraphics.powerConsumption) : undefined,
+        name: formData.dedicatedGraphics.name?.toString().trim() || undefined,
+        manufacturer: formData.dedicatedGraphics.manufacturer?.toString().trim() || undefined,
+        vram: toNumber(formData.dedicatedGraphics.vram),
+        memoryType: formData.dedicatedGraphics.memoryType?.toString().trim() || undefined,
+        memorySpeed: toNumber(formData.dedicatedGraphics.memorySpeed),
+        memoryBusWidth: toNumber(formData.dedicatedGraphics.memoryBusWidth),
+        baseClock: toNumber(formData.dedicatedGraphics.baseClock),
+        boostClock: toNumber(formData.dedicatedGraphics.boostClock),
+        powerConsumption: toNumber(formData.dedicatedGraphics.powerConsumption),
         powerConnectors: formData.dedicatedGraphics.powerConnectors || [],
         availablePorts: formData.dedicatedGraphics.availablePorts || [],
         gamingTechnologies: formData.dedicatedGraphics.gamingTechnologies || [],
@@ -1073,7 +1115,8 @@ export function EditProductModal({
                         supplierEmail: "",
                         supplierLocation: "",
                         purchasePrice: 0,
-                        minimumOrderQuantity: 1,
+                        purchasedQuantity: 0,
+                        quantity: 0,
                         notes: "",
                       },
                     });
@@ -1102,7 +1145,7 @@ export function EditProductModal({
                       })
                     }
                   />
-                </div>
+                </div>  
                 <div>
                   <label className="text-sm font-medium">
                     Supplier Phone *
@@ -1454,10 +1497,10 @@ export function EditProductModal({
                       processor: {
                         name: "",
                         cacheMemory: "",
-                        baseClockSpeed: "",
-                        maxTurboSpeed: "",
-                        cores: "",
-                        threads: "",
+                        baseClockSpeed: undefined,
+                        maxTurboSpeed: undefined,
+                        cores: undefined,
+                        threads: undefined,
                         integratedGraphics: "",
                       },
                     } : null);
@@ -1545,7 +1588,7 @@ export function EditProductModal({
                         ...formData,
                         processor: {
                           ...formData.processor,
-                          baseClockSpeed: e.target.value,
+                          baseClockSpeed: e.target.value ? Number(e.target.value) : undefined,
                         },
                       } : null)
                     }
@@ -1566,7 +1609,7 @@ export function EditProductModal({
                         ...formData,
                         processor: {
                           ...formData.processor,
-                          maxTurboSpeed: e.target.value,
+                          maxTurboSpeed: e.target.value ? Number(e.target.value) : undefined,
                         },
                       } : null)
                     }
@@ -1586,7 +1629,7 @@ export function EditProductModal({
                         ...formData,
                         processor: {
                           ...formData.processor,
-                          cores: e.target.value,
+                          cores: e.target.value ? Number(e.target.value) : undefined,
                         },
                       } : null)
                     }
@@ -1606,7 +1649,7 @@ export function EditProductModal({
                         ...formData,
                         processor: {
                           ...formData.processor,
-                          threads: e.target.value,
+                          threads: e.target.value ? Number(e.target.value) : undefined,
                         },
                       } : null)
                     }
@@ -1680,13 +1723,13 @@ export function EditProductModal({
                         hasDedicatedGraphics: false,
                         name: "",
                         manufacturer: "",
-                        vram: "",
+                        vram: undefined,
                         memoryType: "",
-                        memorySpeed: "",
-                        memoryBusWidth: "",
-                        baseClock: "",
-                        boostClock: "",
-                        powerConsumption: "",
+                        memorySpeed: undefined,
+                        memoryBusWidth: undefined,
+                        baseClock: undefined,
+                        boostClock: undefined,
+                        powerConsumption: undefined,
                         powerConnectors: [],
                         availablePorts: [],
                         gamingTechnologies: [],
@@ -1727,16 +1770,31 @@ export function EditProductModal({
                     <div>
                       <label className="text-sm font-medium">اسم/موديل كرت الشاشة *</label>
                       <Select
-                        value={formData.dedicatedGraphics.name || ""}
-                        onValueChange={(value) =>
-                          setFormData(formData ? {
-                            ...formData,
-                            dedicatedGraphics: {
-                              ...formData.dedicatedGraphics,
-                              name: value,
-                            },
-                          } : null)
+                        value={
+                          formData.dedicatedGraphics.name &&
+                          graphicsCardOptions.includes(formData.dedicatedGraphics.name)
+                            ? formData.dedicatedGraphics.name
+                            : "custom"
                         }
+                        onValueChange={(value) => {
+                          if (value === "custom") {
+                            setFormData(formData ? {
+                              ...formData,
+                              dedicatedGraphics: {
+                                ...formData.dedicatedGraphics,
+                                name: "", // Start with empty string for custom input
+                              },
+                            } : null);
+                          } else {
+                            setFormData(formData ? {
+                              ...formData,
+                              dedicatedGraphics: {
+                                ...formData.dedicatedGraphics,
+                                name: value,
+                              },
+                            } : null);
+                          }
+                        }}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="اختر كرت الشاشة" />
@@ -1750,10 +1808,12 @@ export function EditProductModal({
                           <SelectItem value="custom">موديل مخصص</SelectItem>
                         </SelectContent>
                       </Select>
-                      {formData.dedicatedGraphics.name === "custom" && (
+                      {(!formData.dedicatedGraphics.name ||
+                        !graphicsCardOptions.includes(formData.dedicatedGraphics.name)) && (
                         <Input
                           className="mt-2"
                           placeholder="أدخل اسم كرت الشاشة المخصص"
+                          value={formData.dedicatedGraphics.name || ""}
                           onChange={(e) =>
                             setFormData(formData ? {
                               ...formData,
@@ -1812,13 +1872,18 @@ export function EditProductModal({
                     <div>
                       <label className="text-sm font-medium">ذاكرة كرت الشاشة (GB)</label>
                       <Select
-                        value={formData.dedicatedGraphics.vram || ""}
+                        value={
+                          formData.dedicatedGraphics.vram !== undefined &&
+                          vramOptions.includes(formData.dedicatedGraphics.vram)
+                            ? formData.dedicatedGraphics.vram.toString()
+                            : "custom"
+                        }
                         onValueChange={(value) =>
                           setFormData(formData ? {
                             ...formData,
                             dedicatedGraphics: {
                               ...formData.dedicatedGraphics,
-                              vram: value,
+                              vram: value === "custom" ? undefined : Number(value),
                             },
                           } : null)
                         }
@@ -1835,19 +1900,26 @@ export function EditProductModal({
                           <SelectItem value="custom">قيمة مخصصة</SelectItem>
                         </SelectContent>
                       </Select>
-                      {formData.dedicatedGraphics.vram === "custom" && (
+                      {(formData.dedicatedGraphics.vram === undefined ||
+                        !vramOptions.includes(formData.dedicatedGraphics.vram)) && (
                         <Input
                           className="mt-2"
                           type="number"
                           min="1"
                           max="128"
                           placeholder="أدخل حجم الذاكرة (GB)"
+                          value={
+                            formData.dedicatedGraphics.vram !== undefined &&
+                            !vramOptions.includes(formData.dedicatedGraphics.vram)
+                              ? formData.dedicatedGraphics.vram.toString()
+                              : ""
+                          }
                           onChange={(e) =>
                             setFormData(formData ? {
                               ...formData,
                               dedicatedGraphics: {
                                 ...formData.dedicatedGraphics,
-                                vram: e.target.value,
+                                vram: e.target.value ? Number(e.target.value) : undefined,
                               },
                             } : null)
                           }
@@ -1894,7 +1966,7 @@ export function EditProductModal({
                             ...formData,
                             dedicatedGraphics: {
                               ...formData.dedicatedGraphics,
-                              memorySpeed: e.target.value,
+                              memorySpeed: e.target.value ? Number(e.target.value) : undefined,
                             },
                           } : null)
                         }
@@ -1905,13 +1977,18 @@ export function EditProductModal({
                     <div>
                       <label className="text-sm font-medium">عرض ناقل الذاكرة (bit)</label>
                       <Select
-                        value={formData.dedicatedGraphics.memoryBusWidth || ""}
+                        value={
+                          formData.dedicatedGraphics.memoryBusWidth !== undefined &&
+                          memoryBusWidthOptions.includes(formData.dedicatedGraphics.memoryBusWidth)
+                            ? formData.dedicatedGraphics.memoryBusWidth.toString()
+                            : "custom"
+                        }
                         onValueChange={(value) =>
                           setFormData(formData ? {
                             ...formData,
                             dedicatedGraphics: {
                               ...formData.dedicatedGraphics,
-                              memoryBusWidth: value,
+                              memoryBusWidth: value === "custom" ? undefined : Number(value),
                             },
                           } : null)
                         }
@@ -1928,19 +2005,26 @@ export function EditProductModal({
                           <SelectItem value="custom">قيمة مخصصة</SelectItem>
                         </SelectContent>
                       </Select>
-                      {formData.dedicatedGraphics.memoryBusWidth === "custom" && (
+                      {(formData.dedicatedGraphics.memoryBusWidth === undefined ||
+                        !memoryBusWidthOptions.includes(formData.dedicatedGraphics.memoryBusWidth)) && (
                         <Input
                           className="mt-2"
                           type="number"
                           min="64"
                           max="1024"
                           placeholder="أدخل عرض الناقل (bit)"
+                          value={
+                            formData.dedicatedGraphics.memoryBusWidth !== undefined &&
+                            !memoryBusWidthOptions.includes(formData.dedicatedGraphics.memoryBusWidth)
+                              ? formData.dedicatedGraphics.memoryBusWidth.toString()
+                              : ""
+                          }
                           onChange={(e) =>
                             setFormData(formData ? {
                               ...formData,
                               dedicatedGraphics: {
                                 ...formData.dedicatedGraphics,
-                                memoryBusWidth: e.target.value,
+                                memoryBusWidth: e.target.value ? Number(e.target.value) : undefined,
                               },
                             } : null)
                           }
@@ -1960,7 +2044,7 @@ export function EditProductModal({
                             ...formData,
                             dedicatedGraphics: {
                               ...formData.dedicatedGraphics,
-                              baseClock: e.target.value,
+                              baseClock: e.target.value ? Number(e.target.value) : undefined,
                             },
                           } : null)
                         }
@@ -1980,7 +2064,7 @@ export function EditProductModal({
                             ...formData,
                             dedicatedGraphics: {
                               ...formData.dedicatedGraphics,
-                              boostClock: e.target.value,
+                              boostClock: e.target.value ? Number(e.target.value) : undefined,
                             },
                           } : null)
                         }
@@ -2000,7 +2084,7 @@ export function EditProductModal({
                             ...formData,
                             dedicatedGraphics: {
                               ...formData.dedicatedGraphics,
-                              powerConsumption: e.target.value,
+                              powerConsumption: e.target.value ? Number(e.target.value) : undefined,
                             },
                           } : null)
                         }

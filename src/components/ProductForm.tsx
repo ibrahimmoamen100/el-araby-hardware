@@ -386,29 +386,75 @@ export function ProductForm({ onSubmit }: ProductFormProps) {
           price_delta: Number(addon.price_delta)
         }));
 
-      // Process processor data
-      const processedProcessor = showProcessorInfo && formData.processor ? {
-        name: formData.processor.name || undefined,
-        cacheMemory: formData.processor.cacheMemory || undefined,
-        baseClockSpeed: formData.processor.baseClockSpeed ? Number(formData.processor.baseClockSpeed) : undefined,
-        maxTurboSpeed: formData.processor.maxTurboSpeed ? Number(formData.processor.maxTurboSpeed) : undefined,
-        cores: formData.processor.cores ? Number(formData.processor.cores) : undefined,
-        threads: formData.processor.threads ? Number(formData.processor.threads) : undefined,
-        integratedGraphics: formData.processor.integratedGraphics || undefined,
+      // Process processor data - save if there's actual data, regardless of showProcessorInfo state
+      const hasProcessorData = formData.processor && (
+        (formData.processor.name && formData.processor.name.trim() !== "") ||
+        (formData.processor.cacheMemory && formData.processor.cacheMemory.trim() !== "") ||
+        (formData.processor.baseClockSpeed !== undefined && formData.processor.baseClockSpeed !== "" && formData.processor.baseClockSpeed !== null) ||
+        (formData.processor.maxTurboSpeed !== undefined && formData.processor.maxTurboSpeed !== "" && formData.processor.maxTurboSpeed !== null) ||
+        (formData.processor.cores !== undefined && formData.processor.cores !== "" && formData.processor.cores !== null) ||
+        (formData.processor.threads !== undefined && formData.processor.threads !== "" && formData.processor.threads !== null) ||
+        (formData.processor.integratedGraphics && formData.processor.integratedGraphics.trim() !== "")
+      );
+      
+      const processedProcessor = hasProcessorData ? {
+        name: formData.processor.name?.trim() || undefined,
+        cacheMemory: formData.processor.cacheMemory?.trim() || undefined,
+        baseClockSpeed: formData.processor.baseClockSpeed !== undefined && formData.processor.baseClockSpeed !== "" && formData.processor.baseClockSpeed !== null 
+          ? Number(formData.processor.baseClockSpeed) 
+          : undefined,
+        maxTurboSpeed: formData.processor.maxTurboSpeed !== undefined && formData.processor.maxTurboSpeed !== "" && formData.processor.maxTurboSpeed !== null
+          ? Number(formData.processor.maxTurboSpeed)
+          : undefined,
+        cores: formData.processor.cores !== undefined && formData.processor.cores !== "" && formData.processor.cores !== null
+          ? Number(formData.processor.cores)
+          : undefined,
+        threads: formData.processor.threads !== undefined && formData.processor.threads !== "" && formData.processor.threads !== null
+          ? Number(formData.processor.threads)
+          : undefined,
+        integratedGraphics: formData.processor.integratedGraphics?.trim() || undefined,
       } : undefined;
 
-      // Process dedicated graphics data
-      const processedDedicatedGraphics = showDedicatedGraphicsInfo && formData.dedicatedGraphics ? {
+      // Process dedicated graphics data - save if there's actual data, regardless of showDedicatedGraphicsInfo state
+      const hasDedicatedGraphicsData = formData.dedicatedGraphics && (
+        formData.dedicatedGraphics.hasDedicatedGraphics === true ||
+        (formData.dedicatedGraphics.name && formData.dedicatedGraphics.name.trim() !== "") ||
+        (formData.dedicatedGraphics.manufacturer && formData.dedicatedGraphics.manufacturer.trim() !== "") ||
+        (formData.dedicatedGraphics.vram !== undefined && formData.dedicatedGraphics.vram !== "" && formData.dedicatedGraphics.vram !== null) ||
+        (formData.dedicatedGraphics.memoryType && formData.dedicatedGraphics.memoryType.trim() !== "") ||
+        (formData.dedicatedGraphics.memorySpeed !== undefined && formData.dedicatedGraphics.memorySpeed !== "" && formData.dedicatedGraphics.memorySpeed !== null) ||
+        (formData.dedicatedGraphics.memoryBusWidth !== undefined && formData.dedicatedGraphics.memoryBusWidth !== "" && formData.dedicatedGraphics.memoryBusWidth !== null) ||
+        (formData.dedicatedGraphics.baseClock !== undefined && formData.dedicatedGraphics.baseClock !== "" && formData.dedicatedGraphics.baseClock !== null) ||
+        (formData.dedicatedGraphics.boostClock !== undefined && formData.dedicatedGraphics.boostClock !== "" && formData.dedicatedGraphics.boostClock !== null) ||
+        (formData.dedicatedGraphics.powerConsumption !== undefined && formData.dedicatedGraphics.powerConsumption !== "" && formData.dedicatedGraphics.powerConsumption !== null) ||
+        (formData.dedicatedGraphics.powerConnectors && Array.isArray(formData.dedicatedGraphics.powerConnectors) && formData.dedicatedGraphics.powerConnectors.length > 0) ||
+        (formData.dedicatedGraphics.availablePorts && Array.isArray(formData.dedicatedGraphics.availablePorts) && formData.dedicatedGraphics.availablePorts.length > 0) ||
+        (formData.dedicatedGraphics.gamingTechnologies && Array.isArray(formData.dedicatedGraphics.gamingTechnologies) && formData.dedicatedGraphics.gamingTechnologies.length > 0)
+      );
+      
+      const processedDedicatedGraphics = hasDedicatedGraphicsData ? {
         hasDedicatedGraphics: formData.dedicatedGraphics.hasDedicatedGraphics || false,
-        name: formData.dedicatedGraphics.name || undefined,
-        manufacturer: formData.dedicatedGraphics.manufacturer || undefined,
-        vram: formData.dedicatedGraphics.vram ? Number(formData.dedicatedGraphics.vram) : undefined,
-        memoryType: formData.dedicatedGraphics.memoryType || undefined,
-        memorySpeed: formData.dedicatedGraphics.memorySpeed ? Number(formData.dedicatedGraphics.memorySpeed) : undefined,
-        memoryBusWidth: formData.dedicatedGraphics.memoryBusWidth ? Number(formData.dedicatedGraphics.memoryBusWidth) : undefined,
-        baseClock: formData.dedicatedGraphics.baseClock ? Number(formData.dedicatedGraphics.baseClock) : undefined,
-        boostClock: formData.dedicatedGraphics.boostClock ? Number(formData.dedicatedGraphics.boostClock) : undefined,
-        powerConsumption: formData.dedicatedGraphics.powerConsumption ? Number(formData.dedicatedGraphics.powerConsumption) : undefined,
+        name: formData.dedicatedGraphics.name?.trim() || undefined,
+        manufacturer: formData.dedicatedGraphics.manufacturer?.trim() || undefined,
+        vram: formData.dedicatedGraphics.vram !== undefined && formData.dedicatedGraphics.vram !== "" && formData.dedicatedGraphics.vram !== null
+          ? Number(formData.dedicatedGraphics.vram)
+          : undefined,
+        memoryType: formData.dedicatedGraphics.memoryType?.trim() || undefined,
+        memorySpeed: formData.dedicatedGraphics.memorySpeed !== undefined && formData.dedicatedGraphics.memorySpeed !== "" && formData.dedicatedGraphics.memorySpeed !== null
+          ? Number(formData.dedicatedGraphics.memorySpeed)
+          : undefined,
+        memoryBusWidth: formData.dedicatedGraphics.memoryBusWidth !== undefined && formData.dedicatedGraphics.memoryBusWidth !== "" && formData.dedicatedGraphics.memoryBusWidth !== null
+          ? Number(formData.dedicatedGraphics.memoryBusWidth)
+          : undefined,
+        baseClock: formData.dedicatedGraphics.baseClock !== undefined && formData.dedicatedGraphics.baseClock !== "" && formData.dedicatedGraphics.baseClock !== null
+          ? Number(formData.dedicatedGraphics.baseClock)
+          : undefined,
+        boostClock: formData.dedicatedGraphics.boostClock !== undefined && formData.dedicatedGraphics.boostClock !== "" && formData.dedicatedGraphics.boostClock !== null
+          ? Number(formData.dedicatedGraphics.boostClock)
+          : undefined,
+        powerConsumption: formData.dedicatedGraphics.powerConsumption !== undefined && formData.dedicatedGraphics.powerConsumption !== "" && formData.dedicatedGraphics.powerConsumption !== null
+          ? Number(formData.dedicatedGraphics.powerConsumption)
+          : undefined,
         powerConnectors: formData.dedicatedGraphics.powerConnectors || [],
         availablePorts: formData.dedicatedGraphics.availablePorts || [],
         gamingTechnologies: formData.dedicatedGraphics.gamingTechnologies || [],
@@ -1798,16 +1844,31 @@ export function ProductForm({ onSubmit }: ProductFormProps) {
                 <div>
                   <label className="text-sm font-medium">اسم/موديل كرت الشاشة *</label>
                   <Select
-                    value={formData.dedicatedGraphics.name}
-                    onValueChange={(value) =>
-                      setFormData({
-                        ...formData,
-                        dedicatedGraphics: {
-                          ...formData.dedicatedGraphics,
-                          name: value,
-                        },
-                      })
+                    value={
+                      formData.dedicatedGraphics.name &&
+                      graphicsCardOptions.includes(formData.dedicatedGraphics.name)
+                        ? formData.dedicatedGraphics.name
+                        : "custom"
                     }
+                    onValueChange={(value) => {
+                      if (value === "custom") {
+                        setFormData({
+                          ...formData,
+                          dedicatedGraphics: {
+                            ...formData.dedicatedGraphics,
+                            name: "", // Start with empty string for custom input
+                          },
+                        });
+                      } else {
+                        setFormData({
+                          ...formData,
+                          dedicatedGraphics: {
+                            ...formData.dedicatedGraphics,
+                            name: value,
+                          },
+                        });
+                      }
+                    }}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="اختر كرت الشاشة" />
@@ -1821,10 +1882,12 @@ export function ProductForm({ onSubmit }: ProductFormProps) {
                       <SelectItem value="custom">موديل مخصص</SelectItem>
                     </SelectContent>
                   </Select>
-                  {formData.dedicatedGraphics.name === "custom" && (
+                  {(!formData.dedicatedGraphics.name ||
+                    !graphicsCardOptions.includes(formData.dedicatedGraphics.name)) && (
                     <Input
                       className="mt-2"
                       placeholder="أدخل اسم كرت الشاشة المخصص"
+                      value={formData.dedicatedGraphics.name || ""}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
